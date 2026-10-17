@@ -66,3 +66,15 @@ window.addEventListener('scroll',()=>backToTop.classList.toggle('show',window.sc
 backToTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 
 
+/* Catalog enhancements */
+let favoriteItems=[];try{favoriteItems=JSON.parse(localStorage.getItem('skokHairProFavorites')||'[]')}catch(e){favoriteItems=[]}
+let currentCatalogItems=products;
+const oldRender=render;
+render=function(items=products){currentCatalogItems=items;oldRender(items);const count=document.querySelector('#productCount');if(count)count.textContent=`${items.length} товар${items.length===1?'':'ів'}`;document.querySelectorAll('.product').forEach(card=>{const i=+card.dataset.productIndex;let fav=document.createElement('button');fav.className='favorite-btn';fav.type='button';fav.setAttribute('aria-label','Додати в обране');fav.textContent=favoriteItems.includes(i)?'♥':'♡';fav.classList.toggle('is-favorite',favoriteItems.includes(i));fav.onclick=e=>{e.stopPropagation();if(favoriteItems.includes(i))favoriteItems=favoriteItems.filter(x=>x!==i);else favoriteItems.push(i);localStorage.setItem('skokHairProFavorites',JSON.stringify(favoriteItems));fav.textContent=favoriteItems.includes(i)?'♥':'♡';fav.classList.toggle('is-favorite',favoriteItems.includes(i));show(favoriteItems.includes(i)?'Додано в обране':'Видалено з обраного')};card.appendChild(fav)})};
+function priceOf(p){return Number(p[1].replace(/[^0-9]/g,'').replace(/\s/g,''))}
+document.querySelector('#productSort').onchange=e=>{const v=e.target.value;let a=[...currentCatalogItems];if(v==='price-asc')a.sort((x,y)=>priceOf(x)-priceOf(y));if(v==='price-desc')a.sort((x,y)=>priceOf(y)-priceOf(x));if(v==='popular')a.sort((x,y)=>products.indexOf(x)-products.indexOf(y));if(v==='new')a.sort((x,y)=>products.indexOf(y)-products.indexOf(x));render(a);setCatalogView(catalogView)};
+function recent(){try{return JSON.parse(localStorage.getItem('skokHairProRecent')||'[]')}catch(e){return []}}
+function renderRecent(){const ids=recent(),section=document.querySelector('#recentSection'),box=document.querySelector('#recentProducts');if(!ids.length){section.hidden=true;return}section.hidden=false;box.innerHTML=ids.map(i=>{const p=products[i];return `<button class="recent-card" data-index="${i}"><img src="assets/${localPhotos[i%localPhotos.length]}" alt=""><span>${p[0]}</span><b>${p[1]}</b></button>`}).join('');box.querySelectorAll('.recent-card').forEach(b=>b.onclick=()=>openProduct(+b.dataset.index))}
+const originalOpenProduct=openProduct;openProduct=function(index){let ids=recent().filter(x=>x!==index);ids.unshift(index);localStorage.setItem('skokHairProRecent',JSON.stringify(ids.slice(0,6)));renderRecent();originalOpenProduct(index)};
+renderRecent();render(products);
+
