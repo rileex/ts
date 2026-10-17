@@ -84,3 +84,11 @@ renderRecent();render(products);
 
 
 
+// Touch-safe delegated handlers for dynamically rendered catalog cards.
+document.addEventListener('click', event => {
+  const buy = event.target.closest('.product .buy');
+  if (buy) { event.preventDefault(); event.stopPropagation(); openProduct(Number(buy.dataset.index)); return; }
+});
+
+
+
