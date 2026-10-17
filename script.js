@@ -85,10 +85,13 @@ renderRecent();render(products);
 
 
 // Touch-safe delegated handlers for dynamically rendered catalog cards.
-document.addEventListener('click', event => {
-  const buy = event.target.closest('.product .buy');
-  if (buy) { event.preventDefault(); event.stopPropagation(); openProduct(Number(buy.dataset.index)); return; }
-});
-
-
+function handleProductBuy(event){
+  const buy=event.target.closest('.product .buy');
+  if(!buy || buy.dataset.handled==='1') return;
+  event.preventDefault(); event.stopPropagation(); buy.dataset.handled='1';
+  openProduct(Number(buy.dataset.index));
+  setTimeout(()=>delete buy.dataset.handled,400);
+}
+document.addEventListener('click',handleProductBuy);
+document.addEventListener('pointerup',handleProductBuy,{passive:false});
 
