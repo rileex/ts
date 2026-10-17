@@ -34,7 +34,7 @@ function addToCart(name){const item=cartItems.find(x=>x.name===name);if(item)ite
 function badgeFor(i){return i<6?'Бестселер':categories[i]==='sets'?'Подарунок':i%11===0?'Новинка':''}
 function render(items=products){
   const counter=document.querySelector("#productCount"); if(counter) counter.textContent=items.length + " товар" + (items.length===1 ? "" : "ів");
-  grid.innerHTML=items.length?items.map((p,n)=>{const i=products.indexOf(p),badge=badgeFor(i);return `<article class="product reveal-on-scroll" style="--reveal-delay:${Math.min(n,8)*55}ms" data-product-index="${i}"><div class="product-image">${badge?`<span class="product-badge">${badge}</span>`:''}<img src="assets/${localPhotos[i%localPhotos.length]}" alt="${p[0]} — SKOK HAIR PRO" loading="lazy"></div><h3>${p[0]}</h3><span class="price">${p[1]} / 300 мл</span><button class="buy" data-index="${i}">Купити</button></article>`}).join(''):'<div class="catalog-empty"><strong>Нічого не знайдено</strong><span>Спробуйте іншу назву або категорію.</span></div>';
+  grid.innerHTML=items.length?items.map((p,n)=>{const i=products.indexOf(p),badge=badgeFor(i);return `<article class="product reveal-on-scroll" style="--reveal-delay:${Math.min(n,8)*55}ms" data-product-index="${i}"><div class="product-image">${badge?`<span class="product-badge">${badge}</span>`:''}<img src="assets/${localPhotos[i%localPhotos.length]}" alt="${p[0]} — SKOK HAIR PRO" loading="lazy"></div><h3>${p[0]}</h3><span class="price">${p[1]} / 300 мл</span><button type="button" class="buy" data-index="${i}" onclick="event.stopPropagation();openProduct(${i})">Купити</button></article>`}).join(''):'<div class="catalog-empty"><strong>Нічого не знайдено</strong><span>Спробуйте іншу назву або категорію.</span></div>';
   document.querySelectorAll('.buy').forEach(b=>b.onclick=e=>{e.stopPropagation();openProduct(+b.dataset.index)});document.querySelectorAll('.product').forEach(card=>{card.onclick=()=>openProduct(+card.dataset.productIndex);if(typeof observer!=='undefined')observer.observe(card)})
 }
 let selectedProduct=0;const productModal=document.querySelector('#productModal');
@@ -94,4 +94,5 @@ function handleProductBuy(event){
 }
 document.addEventListener('click',handleProductBuy);
 document.addEventListener('pointerup',handleProductBuy,{passive:false});
+
 
