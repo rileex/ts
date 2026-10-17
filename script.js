@@ -33,6 +33,7 @@ function syncCart(){const total=cartItems.reduce((s,x)=>s+x.qty,0);document.quer
 function addToCart(name){const item=cartItems.find(x=>x.name===name);if(item)item.qty++;else cartItems.push({name,qty:1});syncCart();const cartButton=document.querySelector('#cartBtn');cartButton.classList.remove('bump');void cartButton.offsetWidth;cartButton.classList.add('bump');show('Товар додано до кошика')}
 function badgeFor(i){return i<6?'Бестселер':categories[i]==='sets'?'Подарунок':i%11===0?'Новинка':''}
 function render(items=products){
+  const counter=document.querySelector("#productCount"); if(counter) counter.textContent=items.length + " товар" + (items.length===1 ? "" : "ів");
   grid.innerHTML=items.length?items.map((p,n)=>{const i=products.indexOf(p),badge=badgeFor(i);return `<article class="product reveal-on-scroll" style="--reveal-delay:${Math.min(n,8)*55}ms" data-product-index="${i}"><div class="product-image">${badge?`<span class="product-badge">${badge}</span>`:''}<img src="assets/${localPhotos[i%localPhotos.length]}" alt="${p[0]} — SKOK HAIR PRO" loading="lazy"></div><h3>${p[0]}</h3><span class="price">${p[1]} / 300 мл</span><button class="buy" data-index="${i}">Купити</button></article>`}).join(''):'<div class="catalog-empty"><strong>Нічого не знайдено</strong><span>Спробуйте іншу назву або категорію.</span></div>';
   document.querySelectorAll('.buy').forEach(b=>b.onclick=e=>{e.stopPropagation();openProduct(+b.dataset.index)});document.querySelectorAll('.product').forEach(card=>{card.onclick=()=>openProduct(+card.dataset.productIndex);if(typeof observer!=='undefined')observer.observe(card)})
 }
@@ -77,4 +78,9 @@ function recent(){try{return JSON.parse(localStorage.getItem('skokHairProRecent'
 function renderRecent(){const ids=recent(),section=document.querySelector('#recentSection'),box=document.querySelector('#recentProducts');if(!ids.length){section.hidden=true;return}section.hidden=false;box.innerHTML=ids.map(i=>{const p=products[i];return `<button class="recent-card" data-index="${i}"><img src="assets/${localPhotos[i%localPhotos.length]}" alt=""><span>${p[0]}</span><b>${p[1]}</b></button>`}).join('');box.querySelectorAll('.recent-card').forEach(b=>b.onclick=()=>openProduct(+b.dataset.index))}
 const originalOpenProduct=openProduct;openProduct=function(index){let ids=recent().filter(x=>x!==index);ids.unshift(index);localStorage.setItem('skokHairProRecent',JSON.stringify(ids.slice(0,6)));renderRecent();originalOpenProduct(index)};
 renderRecent();render(products);
+
+
+
+
+
 
