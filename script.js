@@ -75,7 +75,7 @@ render=function(items=products){currentCatalogItems=items;oldRender(items);const
 function priceOf(p){return Number(p[1].replace(/[^0-9]/g,'').replace(/\s/g,''))}
 document.querySelector('#productSort').onchange=e=>{const v=e.target.value;let a=[...currentCatalogItems];if(v==='price-asc')a.sort((x,y)=>priceOf(x)-priceOf(y));if(v==='price-desc')a.sort((x,y)=>priceOf(y)-priceOf(x));if(v==='popular')a.sort((x,y)=>products.indexOf(x)-products.indexOf(y));if(v==='new')a.sort((x,y)=>products.indexOf(y)-products.indexOf(x));render(a);setCatalogView(catalogView)};
 function recent(){try{return JSON.parse(localStorage.getItem('skokHairProRecent')||'[]')}catch(e){return []}}
-function renderRecent(){const ids=recent(),section=document.querySelector('#recentSection'),box=document.querySelector('#recentProducts');if(!ids.length){section.hidden=true;return}section.hidden=false;box.innerHTML=ids.map(i=>{const p=products[i];return `<button class="recent-card" data-index="${i}"><img src="assets/${localPhotos[i%localPhotos.length]}" alt=""><span>${p[0]}</span><b>${p[1]}</b></button>`}).join('');box.querySelectorAll('.recent-card').forEach(b=>b.onclick=()=>openProduct(+b.dataset.index))}
+function renderRecent(){const ids=recent(),section=document.querySelector('#recentSection'),box=document.querySelector('#recentProducts');if(!section||!box)return;if(!ids.length){section.hidden=true;return}section.hidden=false;box.innerHTML=ids.map(i=>{const p=products[i];return `<button class="recent-card" data-index="${i}"><img src="assets/${localPhotos[i%localPhotos.length]}" alt=""><span>${p[0]}</span><b>${p[1]}</b></button>`}).join('');box.querySelectorAll('.recent-card').forEach(b=>b.onclick=()=>openProduct(+b.dataset.index))}
 const originalOpenProduct=openProduct;openProduct=function(index){let ids=recent().filter(x=>x!==index);ids.unshift(index);localStorage.setItem('skokHairProRecent',JSON.stringify(ids.slice(0,6)));renderRecent();originalOpenProduct(index)};
 renderRecent();render(products);
 
@@ -105,4 +105,8 @@ document.addEventListener('touchstart', event => {
   event.stopPropagation();
   openProduct(Number(buy.dataset.index));
 },{passive:false,capture:true});
+
+// Favorites are a real catalog view, including the header link.
+const favoritesLink=document.querySelector('#favoritesLink');
+if(favoritesLink) favoritesLink.addEventListener('click',e=>{e.preventDefault();const ids=favoriteItems.slice();render(ids.map(i=>products[i]));document.querySelectorAll('.categories a').forEach(a=>a.classList.remove('active'));document.querySelector('#catalog')?.scrollIntoView({behavior:'smooth',block:'start'});show(ids.length?`Обрані товари: ${ids.length}`:'В обраному поки порожньо')});
 
