@@ -84,3 +84,7 @@
 @keyframes heartPop{0%{transform:scale(.7)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
 @media(max-width:800px){.hero-copy{animation-duration:.65s}.hero-mark{animation-duration:9s}.product:hover{transform:none!important}.product:active{transform:scale(.985)!important}.product-image img{transition:transform .45s ease}.recent-products{overflow-x:auto;grid-template-columns:repeat(6,minmax(145px,1fr));padding-bottom:8px}.recent-card{min-width:145px}}
 
+/* Mobile product button priority */
+.product .buy{position:relative;z-index:20;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+@media(max-width:800px){.product:active,.product:focus-within{transform:none!important}.product .buy:active{transform:scale(.96)!important}}
+
