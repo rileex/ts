@@ -97,3 +97,12 @@ document.addEventListener('pointerup',handleProductBuy,{passive:false});
 
 
 
+// Capture touch before the card handler so the product modal always opens on mobile.
+document.addEventListener('touchstart', event => {
+  const buy=event.target.closest('.product .buy');
+  if(!buy) return;
+  event.preventDefault();
+  event.stopPropagation();
+  openProduct(Number(buy.dataset.index));
+},{passive:false,capture:true});
+
