@@ -110,3 +110,10 @@ document.addEventListener('touchstart', event => {
 const favoritesLink=document.querySelector('#favoritesLink');
 if(favoritesLink) favoritesLink.addEventListener('click',e=>{e.preventDefault();const ids=favoriteItems.slice();render(ids.map(i=>products[i]));document.querySelectorAll('.categories a').forEach(a=>a.classList.remove('active'));document.querySelector('#catalog')?.scrollIntoView({behavior:'smooth',block:'start'});show(ids.length?`Обрані товари: ${ids.length}`:'В обраному поки порожньо')});
 
+// Apple-inspired dark mode with persistence.
+const themeToggle=document.querySelector('#themeToggle');
+const savedTheme=localStorage.getItem('skokHairProTheme');
+function applyTheme(dark){document.documentElement.classList.toggle('dark-mode',dark);if(themeToggle){themeToggle.setAttribute('aria-pressed',String(dark));themeToggle.setAttribute('aria-label',dark?'Увімкнути світлий режим':'Увімкнути нічний режим');themeToggle.querySelector('.theme-icon').textContent=dark?'☀':'☾';themeToggle.querySelector('.theme-label').textContent=dark?'Світлий режим':'Нічний режим'};localStorage.setItem('skokHairProTheme',dark?'dark':'light')}
+applyTheme(savedTheme==='dark');
+if(themeToggle) themeToggle.addEventListener('click',()=>applyTheme(!document.documentElement.classList.contains('dark-mode')));
+
