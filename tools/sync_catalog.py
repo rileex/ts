@@ -165,9 +165,11 @@ def product_links(html: str) -> list[str]:
         href = urljoin(BASE, anchor.get("href", "").strip()).split("#", 1)[0]
         path = urlparse(href).path.rstrip("/")
         parts = path.split("/")
-        if len(parts) != 3 or parts[1] != "shop" or slug == "koshyk":
+        if len(parts) != 3 or parts[1] != "shop":
             continue
         slug = parts[2]
+        if slug == "koshyk":
+            continue
         if slug in excluded or slug.startswith("page-"):
             continue
         if href not in links:
