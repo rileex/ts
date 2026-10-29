@@ -30,11 +30,11 @@ TRANSLIT = str.maketrans({
     "я": "ya", "ы": "y", "э": "e", "ъ": "", "ё": "yo",
 })
 
-def get(url: str, binary: bool = False):
+def get(url: str, binary: bool = False, timeout: int = 45, retries: int = 5):
     last = None
-    for attempt in range(5):
+    for attempt in range(retries):
         try:
-            response = session.get(url, timeout=45)
+            response = session.get(url, timeout=timeout)
             response.raise_for_status()
             body = response.content if binary else response.text
             if not binary and len(body) < 1000 and "Checking your browser" in body:
@@ -42,7 +42,8 @@ def get(url: str, binary: bool = False):
             return response
         except Exception as exc:
             last = exc
-            time.sleep(1.5 * (attempt + 1))
+            if attempt + 1 < retries:
+                time.sleep(1.5 * (attempt + 1))
     raise RuntimeError(f"GET failed for {url}: {last}")
 
 def clean(value: str) -> str:
@@ -145,7 +146,7 @@ def candidate_page(name: str) -> tuple[str, BeautifulSoup] | None:
     ]
     for url in candidates:
         try:
-            response = get(url)
+            response = get(url, timeout=12, retries=1)
             soup = BeautifulSoup(response.text, "html.parser")
             if is_product_page(soup):
                 return response.url, soup
