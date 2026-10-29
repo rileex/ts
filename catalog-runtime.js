@@ -13,8 +13,9 @@
     data.products.forEach(item => {
       products.push([item.name, item.price]);
       categories.push(item.category || "hair");
-      productPhotoMap.push(item.photo);
-      localPhotos.push(item.photo);
+      const localPhoto = String(item.photo || "").replace(/^assets\//, "");
+      productPhotoMap.push(localPhoto);
+      localPhotos.push(localPhoto);
     });
 
     const importedOpenProduct = openProduct;
