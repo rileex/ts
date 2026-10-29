@@ -1,8 +1,9 @@
 name: Deploy static site to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Sync product catalog"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -14,10 +15,13 @@ concurrency:
 
 jobs:
   deploy:
+    if: \${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Publish gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
