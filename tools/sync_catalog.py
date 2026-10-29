@@ -154,54 +154,82 @@ def candidate_page(name: str) -> tuple[str, BeautifulSoup] | None:
             continue
     return None
 
+CATEGORY_PAGES = [
+    f"{BASE}/shop/",
+    f"{BASE}/shop/shampuni/",
+    f"{BASE}/shop/konditsioneri/",
+    f"{BASE}/shop/maski-dlya-volossya/",
+    f"{BASE}/shop/nezmivniy-doglyad/",
+    f"{BASE}/shop/podarunkovi-nabori/",
+    f"{BASE}/shop/dopovnennya-doglyad/",
+    f"{BASE}/shop/na-wkiry/",
+]
+
+def collect_links_with_browser() -> list[str]:
+    from playwright.sync_api import sync_playwright
+    links = []
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        page = browser.new_page(
+            user_agent=HEADERS["User-Agent"],
+            locale="uk-UA",
+            viewport={"width": 1440, "height": 1000},
+        )
+        for base in CATEGORY_PAGES:
+            for page_number in range(1, 7):
+                url = base if page_number == 1 else base.rstrip("/") + f"/page-{page_number}/"
+                print(f"browser catalog {url}", flush=True)
+                try:
+                    page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                    page.wait_for_timeout(2500)
+                    page.wait_for_selector("a[href*='/shop/']", timeout=15000)
+                    found = product_links(page.content())
+                except Exception as exc:
+                    print(f"  page skipped: {exc}", flush=True)
+                    found = []
+                before = len(links)
+                for link in found:
+                    if link not in links:
+                        links.append(link)
+                if page_number > 1 and len(links) == before:
+                    break
+        browser.close()
+    return links
+
 def main() -> None:
-    source_products = script_products()
-    if len(source_products) < 100:
-        raise RuntimeError(f"Expected at least 100 source products in script.js, found {len(source_products)}")
+    all_links = collect_links_with_browser()
+    if len(all_links) < 100:
+        raise RuntimeError(f"Only {len(all_links)} product links found; refusing to publish partial catalog")
     ASSETS.mkdir(parents=True, exist_ok=True)
     products = []
-    missing = []
-    for index, (source_name, source_price) in enumerate(source_products):
-        print(f"[{index + 1}/{len(source_products)}] {source_name}", flush=True)
-        found = candidate_page(source_name)
-        if not found:
-            missing.append(source_name)
-            continue
-        link, soup = found
-        name = name_from_page(soup, source_name)
+    for index, link in enumerate(all_links):
+        print(f"[{index + 1}/{len(all_links)}] {link}", flush=True)
+        soup = BeautifulSoup(get(link).text, "html.parser")
+        name = name_from_page(soup, link.rstrip("/").rsplit("/", 1)[-1].replace("-", " "))
         if "keune" in name.casefold():
             continue
         images = image_urls(soup)
         if not images:
-            missing.append(f"{source_name} (no gallery)")
-            continue
+            raise RuntimeError(f"No gallery images found for {link}")
         product_dir = ASSETS / safe_slug(name, index + 1)
         product_dir.mkdir(parents=True, exist_ok=True)
         local_images = []
         for image_index, image_url in enumerate(images[:12], 1):
-            try:
-                response = get(image_url, binary=True)
-                target = product_dir / f"{image_index}{extension_for(image_url, response)}"
-                target.write_bytes(response.content)
-                local_images.append(str(target).replace("\\\\", "/"))
-            except Exception as exc:
-                print(f"  image failed: {image_url}: {exc}", flush=True)
-        if not local_images:
-            missing.append(f"{source_name} (download failed)")
-            continue
+            response = get(image_url, binary=True, timeout=45, retries=3)
+            target = product_dir / f"{image_index}{extension_for(image_url, response)}"
+            target.write_bytes(response.content)
+            local_images.append(str(target).replace("\\", "/"))
         products.append({
             "name": name,
-            "price": price_from_page(soup, source_price),
+            "price": price_from_page(soup, "Ціна уточнюється"),
             "category": category_for(name),
             "photo": local_images[0],
             "photos": local_images,
             "description": description_from_page(soup, name),
-            "source": link,
         })
-    if missing:
-        Path("catalog-missing.txt").write_text("\n".join(missing) + "\n", encoding="utf-8")
-    if len(products) < len(source_products) - 2:
-        raise RuntimeError(f"Only {len(products)} products downloaded; missing {len(missing)}. See catalog-missing.txt")
+        time.sleep(0.15)
+    if len(products) < 100 or sum(bool(item["photos"]) for item in products) != len(products):
+        raise RuntimeError("Catalog validation failed: missing products or images")
     OUT.write_text(json.dumps({
         "brand": "SKOK HAIR PRO",
         "source": "catalog import",
