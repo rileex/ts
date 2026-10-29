@@ -157,7 +157,7 @@ def candidate_page(name: str) -> tuple[str, BeautifulSoup] | None:
 def product_links(html: str) -> list[str]:
     excluded = {
         "shampuni", "konditsioneri", "maski-dlya-volossya", "nezmivniy-doglyad",
-        "podarunkovi-nabori", "dopovnennya-doglyad", "na-wkiry",
+        "podarunkovi-nabori", "dopovnennya-doglyad", "na-wkiry", "lineyka-emotsii",
     }
     soup = BeautifulSoup(html, "html.parser")
     links = []
