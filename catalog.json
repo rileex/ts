@@ -1,29 +1,8 @@
 {
   "brand": "SKOK HAIR PRO",
   "source": "catalog import",
-  "count": 144,
+  "count": 143,
   "products": [
-    {
-      "name": "Лінійка Емоції",
-      "price": "1 050 грн",
-      "category": "hair",
-      "photo": "assets/products/002-liniyka-emotsiyi/1.png",
-      "photos": [
-        "assets/products/002-liniyka-emotsiyi/1.png",
-        "assets/products/002-liniyka-emotsiyi/2.jpg",
-        "assets/products/002-liniyka-emotsiyi/3.jpg",
-        "assets/products/002-liniyka-emotsiyi/4.jpg",
-        "assets/products/002-liniyka-emotsiyi/5.jpg",
-        "assets/products/002-liniyka-emotsiyi/6.jpg",
-        "assets/products/002-liniyka-emotsiyi/7.jpg",
-        "assets/products/002-liniyka-emotsiyi/8.jpg",
-        "assets/products/002-liniyka-emotsiyi/9.jpg",
-        "assets/products/002-liniyka-emotsiyi/10.png",
-        "assets/products/002-liniyka-emotsiyi/11.jpg",
-        "assets/products/002-liniyka-emotsiyi/12.jpg"
-      ],
-      "description": "Na Gólov[y] › BROVKOHAIR Безкоштовна доставка на суму від 3000 грн. при повній оплаті на сайті. Перейти у магазин Покупцям Про бренд Доставка і оплата Публічна оферта Блог Контакти Відгуки Акаунт 0 0 Шампуні Пілінг шампуні для нормальної шкіри голови для сухої шкіри голови для жирної шкіри голови для чутливої шкіри голови для всіх типів волосся \"ЕМОЦІЯ\" Кондиціонери кондиціонери 500 мл для всіх типів волосся \"ЕМОЦІЯ\" Маски Незмивні засоби Спреї термозахисти Незмивні креми Флюїди еліксири Текстуруючі спреї для об'єму Лінійка Емоції Шампуні Кондиціонери Подарункові набори Доповнення Na Wkir[y] Гелі для душу Скраби для тіла Креми для тіла Креми для рук Інтимна гігієна Рідке мило для рук Обгортання BrovkoHair › Косметика › Лінійка Емоції Шампуні Кондиціонери Маски Незмивні засоби Лінійка Емоції Шампуні Кондиціонери Подарункові набори Доповнення Na Wkir[y] Фільтри Ціна - Виробник Na Gólov[y] "
-    },
     {
       "name": "Крем-гель для душу з гідролізатом перлин і пребіотиком Na WKIR[y] Cream Shower Gel — Jasmine Luminance Restore",
       "price": "1 200 грн",
