@@ -165,7 +165,7 @@ def product_links(html: str) -> list[str]:
         href = urljoin(BASE, anchor.get("href", "").strip()).split("#", 1)[0]
         path = urlparse(href).path.rstrip("/")
         parts = path.split("/")
-        if len(parts) != 3 or parts[1] != "shop":
+        if len(parts) != 3 or parts[1] != "shop" or slug == "koshyk":
             continue
         slug = parts[2]
         if slug in excluded or slug.startswith("page-"):
@@ -226,7 +226,7 @@ def main() -> None:
         print(f"[{index + 1}/{len(all_links)}] {link}", flush=True)
         soup = BeautifulSoup(get(link).text, "html.parser")
         name = name_from_page(soup, link.rstrip("/").rsplit("/", 1)[-1].replace("-", " "))
-        if "keune" in name.casefold():
+        if name.casefold() == "кошик" or "keune" in name.casefold():
             continue
         images = image_urls(soup)
         if not images:
