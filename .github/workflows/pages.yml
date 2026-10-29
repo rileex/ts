@@ -1,6 +1,8 @@
 name: Deploy static site to GitHub Pages
 
 on:
+  push:
+    branches: [main]
   workflow_run:
     workflows: ["Sync product catalog"]
     types: [completed]
@@ -15,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: \${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: \${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
