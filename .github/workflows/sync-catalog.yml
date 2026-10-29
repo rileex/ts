@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add catalog.json catalog-missing.txt assets/products
+          git add catalog.json assets/products
           git diff --cached --quiet && exit 0
           git commit -m "chore: sync full product catalog and local images"
           git push
