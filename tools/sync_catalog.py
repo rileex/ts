@@ -74,8 +74,13 @@ def is_product_page(soup: BeautifulSoup) -> bool:
     heading = soup.find("h1")
     if not heading:
         return False
-    text = clean(soup.get_text(" ", strip=True))
-    return "Артикул" in text and ("Купити" in text or "Купить" in text)
+    title = clean(heading.get_text(" ", strip=True))
+    page_text = clean(soup.get_text(" ", strip=True)).casefold()
+    if not title or any(marker in page_text[:600] for marker in ("404", "page not found", "сторінку не знайдено")):
+        return False
+    # Product pages vary in their stock and buy controls; a named heading plus
+    # a product-specific gallery is a stronger check than localized button text.
+    return bool(image_urls(soup, title))
 
 def name_from_page(soup: BeautifulSoup, fallback: str) -> str:
     heading = soup.find("h1")
@@ -214,7 +219,7 @@ def product_links(html: str) -> list[str]:
         if slug in excluded or slug.startswith("page-"):
             continue
         if href not in links:
-            links.append(href + "/")
+            links.append(href.rstrip("/") + "/")
     return links
 
 CATEGORY_PAGES = [
