@@ -14,6 +14,16 @@ async function inspectViewport(viewport, name) {
   if (!response?.ok()) throw new Error(name + " homepage HTTP " + response?.status());
   await page.waitForFunction(() => document.documentElement.dataset.catalogCount === "142", { timeout: 90000 });
   await page.waitForFunction(() => document.querySelectorAll("#products .product").length === 142, { timeout: 30000 });
+  const palette = await page.evaluate(() => ({
+    darkMode: document.documentElement.classList.contains("dark-mode"),
+    body: getComputedStyle(document.body).backgroundColor,
+    text: getComputedStyle(document.body).color,
+    catalog: getComputedStyle(document.querySelector("#catalog")).backgroundColor,
+    firstCard: getComputedStyle(document.querySelector("#products .product")).backgroundColor
+  }));
+  if (palette.darkMode || palette.body !== "rgb(255, 255, 255)" || palette.text === "rgb(0, 0, 0)") {
+    throw new Error(name + " theme is not visible light mode: " + JSON.stringify(palette));
+  }
   const cardInfo = await page.locator("#products .product").evaluateAll(cards => cards.map(card => ({
     name: card.querySelector("h3")?.textContent?.trim(),
     src: card.querySelector("img")?.getAttribute("src"),
@@ -34,7 +44,7 @@ async function inspectViewport(viewport, name) {
   await page.locator("#productClose").dispatchEvent("click");
   await page.locator("#catalog").scrollIntoViewIfNeeded();
   await page.screenshot({ path: "artifacts/" + name + "-catalog.png", fullPage: false });
-  results[name] = { status: response.status(), cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length };
+  results[name] = { status: response.status(), palette, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length };
   await context.close();
 }
 
