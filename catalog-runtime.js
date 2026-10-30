@@ -1,6 +1,6 @@
 (async function loadLocalCatalog() {
   try {
-    const response = await fetch("https://raw.githubusercontent.com/rileex/ts/gh-pages/catalog.json?v=final-20261030", { cache: "no-store" });
+    const response = await fetch(new URL("catalog.json?v=same-origin-20261030", document.baseURI), { cache: "no-store" });
     if (!response.ok) return;
     const data = await response.json();
     if (!Array.isArray(data.products) || data.products.length < 100) return;
@@ -9,7 +9,7 @@
       const value = String(file || "").trim();
       if (!value) return "";
       const relative = value.startsWith("assets/") ? value : "assets/" + value.replace(/^\/+/, "");
-      return "https://raw.githubusercontent.com/rileex/ts/gh-pages/" + relative;
+      return new URL(relative, document.baseURI).href;
     };
     const rawAssetPath = file => {
       const value = String(file || "").trim();
