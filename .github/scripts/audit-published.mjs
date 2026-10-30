@@ -15,6 +15,20 @@ async function inspectViewport(viewport, name) {
   if (!response?.ok()) throw new Error(name + " homepage HTTP " + response?.status());
   await page.waitForFunction(() => document.documentElement.dataset.catalogCount === "142", { timeout: 90000 });
   await page.waitForFunction(() => document.querySelectorAll("#products .product").length === 142, { timeout: 30000 });
+  const darkProbe = await page.evaluate(() => {
+    document.documentElement.classList.add("dark-mode");
+    const value = {
+      body: getComputedStyle(document.body).backgroundColor,
+      text: getComputedStyle(document.body).color,
+      catalog: getComputedStyle(document.querySelector("#catalog")).backgroundColor,
+      firstCard: getComputedStyle(document.querySelector("#products .product")).backgroundColor
+    };
+    document.documentElement.classList.remove("dark-mode");
+    return value;
+  });
+  if (darkProbe.body !== "rgb(255, 255, 255)" || darkProbe.text !== "rgb(29, 29, 31)") {
+    throw new Error(name + " stale dark class still produces unreadable colors: " + JSON.stringify(darkProbe));
+  }
   const palette = await page.evaluate(() => ({
     darkMode: document.documentElement.classList.contains("dark-mode"),
     body: getComputedStyle(document.body).backgroundColor,
@@ -45,7 +59,7 @@ async function inspectViewport(viewport, name) {
   await page.locator("#productClose").dispatchEvent("click");
   await page.locator("#catalog").scrollIntoViewIfNeeded();
   await page.screenshot({ path: "artifacts/" + name + "-catalog.png", fullPage: false });
-  results[name] = { status: response.status(), palette, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length };
+  results[name] = { status: response.status(), palette, darkProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length };
   await context.close();
 }
 
