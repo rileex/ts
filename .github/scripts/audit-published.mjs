@@ -29,6 +29,20 @@ async function inspectViewport(viewport, name) {
   if (darkProbe.body !== "rgb(255, 255, 255)" || darkProbe.text !== "rgb(29, 29, 31)" || darkProbe.catalog !== "rgb(255, 255, 255)" || darkProbe.firstCard !== "rgb(255, 255, 255)") {
     throw new Error(name + " stale dark class still produces unreadable colors: " + JSON.stringify(darkProbe));
   }
+  const extensionProbe = await page.evaluate(() => {
+    document.documentElement.setAttribute("native-dark-active", "");
+    const value = {
+      body: getComputedStyle(document.body).backgroundColor,
+      text: getComputedStyle(document.body).color,
+      catalog: getComputedStyle(document.querySelector("#catalog")).backgroundColor,
+      firstCard: getComputedStyle(document.querySelector("#products .product")).backgroundColor
+    };
+    document.documentElement.removeAttribute("native-dark-active");
+    return value;
+  });
+  if (extensionProbe.body !== "rgb(255, 255, 255)" || extensionProbe.text !== "rgb(29, 29, 31)" || extensionProbe.catalog !== "rgb(255, 255, 255)" || extensionProbe.firstCard !== "rgb(255, 255, 255)") {
+    throw new Error(name + " dark-mode extension still produces unreadable colors: " + JSON.stringify(extensionProbe));
+  }
   const palette = await page.evaluate(() => ({
     darkMode: document.documentElement.classList.contains("dark-mode"),
     body: getComputedStyle(document.body).backgroundColor,
@@ -66,7 +80,7 @@ async function inspectViewport(viewport, name) {
   await page.locator("#productClose").dispatchEvent("click");
   await page.locator("#catalog").scrollIntoViewIfNeeded();
   await page.screenshot({ path: "artifacts/" + name + "-catalog.png", fullPage: false });
-  results[name] = { status: response.status(), palette, darkProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length, purchaseButtons: buttonLayout };
+  results[name] = { status: response.status(), palette, darkProbe, extensionProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length, purchaseButtons: buttonLayout };
   await context.close();
 }
 
