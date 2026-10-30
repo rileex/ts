@@ -10,6 +10,7 @@ await mkdir("artifacts", { recursive: true });
 async function inspectViewport(viewport, name) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 1, isMobile: name === "mobile", hasTouch: name === "mobile" });
   const page = await context.newPage();
+  await context.addInitScript(() => localStorage.setItem("skokHairProTheme", "dark"));
   const response = await page.goto(base + "?audit=" + name + "-images", { waitUntil: "domcontentloaded", timeout: 90000 });
   if (!response?.ok()) throw new Error(name + " homepage HTTP " + response?.status());
   await page.waitForFunction(() => document.documentElement.dataset.catalogCount === "142", { timeout: 90000 });
