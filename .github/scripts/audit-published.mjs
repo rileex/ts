@@ -55,11 +55,18 @@ async function inspectViewport(viewport, name) {
   }));
   if (!detail.title || !detail.src || detail.thumbs.length !== 12) throw new Error(name + " product detail/gallery failed to open");
   if (!detail.title.includes(cardInfo[0].name.slice(0, 20))) throw new Error(name + " detail title does not match first card");
+  const buttonLayout = await page.locator(".detail-actions button").evaluateAll(buttons => buttons.map(button => {
+    const rect = button.getBoundingClientRect();
+    return { top: rect.top, height: rect.height, left: rect.left, right: rect.right };
+  }));
+  if (buttonLayout.length !== 2 || Math.abs(buttonLayout[0].top - buttonLayout[1].top) > 1 || Math.abs(buttonLayout[0].height - buttonLayout[1].height) > 1) {
+    throw new Error(name + " purchase buttons are misaligned: " + JSON.stringify(buttonLayout));
+  }
   await page.screenshot({ path: "artifacts/" + name + "-product-detail.png", fullPage: false });
   await page.locator("#productClose").dispatchEvent("click");
   await page.locator("#catalog").scrollIntoViewIfNeeded();
   await page.screenshot({ path: "artifacts/" + name + "-catalog.png", fullPage: false });
-  results[name] = { status: response.status(), palette, darkProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length };
+  results[name] = { status: response.status(), palette, darkProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length, purchaseButtons: buttonLayout };
   await context.close();
 }
 
