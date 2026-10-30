@@ -1,17 +1,14 @@
 name: Audit published storefront images
 
 on:
-  workflow_run:
-    workflows: ["Deploy static site to GitHub Pages"]
-    types: [completed]
-    branches: [main]
+  deployment_status:
 
 permissions:
   contents: read
 
 jobs:
   audit:
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
