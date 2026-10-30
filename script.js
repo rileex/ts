@@ -131,6 +131,6 @@ if(favoritesLink) favoritesLink.addEventListener('click',e=>{e.preventDefault();
 const themeToggle=document.querySelector('#themeToggle');
 localStorage.setItem('skokHairProTheme','light');
 localStorage.setItem('skokThemeResetV1','1');
-function applyTheme(){document.documentElement.classList.remove('dark-mode');document.documentElement.style.colorScheme='light';if(themeToggle){themeToggle.hidden=true;themeToggle.setAttribute('aria-pressed','false')}}
+function applyTheme(){document.documentElement.classList.remove('dark-mode');document.documentElement.style.colorScheme='light';if(themeToggle){themeToggle.style.display='none';themeToggle.setAttribute('aria-pressed','false')}}
 applyTheme();
 
