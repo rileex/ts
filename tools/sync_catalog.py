@@ -209,7 +209,7 @@ def product_links(html: str) -> list[str]:
         if len(parts) != 3 or parts[1] != "shop":
             continue
         slug = parts[2]
-        if slug == "koshyk":
+        if slug in {"koshyk", "cart", "basket", "checkout"}:
             continue
         if slug in excluded or slug.startswith("page-"):
             continue
