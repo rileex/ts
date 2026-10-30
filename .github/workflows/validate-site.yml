@@ -22,13 +22,16 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          from hashlib import sha256
           from pathlib import Path
           data = json.loads(Path("catalog.json").read_text(encoding="utf-8"))
-          assert data["count"] == len(data["products"]) == 143
+          assert data["count"] == len(data["products"]) == 142
           photos = [photo for item in data["products"] for photo in item["photos"]]
-          assert len(photos) >= 1700
+          assert len(photos) == 1704
           assert all(Path(path).is_file() for path in photos), "broken local image path"
+          hashes = {sha256(Path(item["photo"]).read_bytes()).hexdigest() for item in data["products"]}
+          assert len(hashes) == len(data["products"]), "duplicate main product images"
           names = [item["name"].casefold() for item in data["products"]]
-          assert not any("keune" in name or name == "кошик" or name == "лінійка емоції" for name in names)
-          print(f"validated {len(data['products'])} products and {len(photos)} local images")
+          assert not any("keune" in name or name in {"кошик", "оформити замовлення", "лінійка емоції"} for name in names)
+          print(f"validated {len(data['products'])} products, {len(photos)} images, {len(hashes)} unique main photos")
           PY
