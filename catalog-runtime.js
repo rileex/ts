@@ -1,6 +1,6 @@
 (async function loadLocalCatalog() {
   try {
-    const response = await fetch("catalog.json?v=final-20261030", { cache: "no-store" });
+    const response = await fetch("https://raw.githubusercontent.com/rileex/ts/gh-pages/catalog.json?v=final-20261030", { cache: "no-store" });
     if (!response.ok) return;
     const data = await response.json();
     if (!Array.isArray(data.products) || data.products.length < 100) return;
