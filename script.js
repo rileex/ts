@@ -129,9 +129,8 @@ if(favoritesLink) favoritesLink.addEventListener('click',e=>{e.preventDefault();
 
 // Apple-inspired dark mode with persistence.
 const themeToggle=document.querySelector('#themeToggle');
-if(localStorage.getItem('skokThemeResetV1')!=='1'){localStorage.removeItem('skokHairProTheme');localStorage.setItem('skokThemeResetV1','1')}
-const savedTheme=localStorage.getItem('skokHairProTheme');
-function applyTheme(dark){document.documentElement.classList.toggle('dark-mode',dark);if(themeToggle){themeToggle.setAttribute('aria-pressed',String(dark));themeToggle.setAttribute('aria-label',dark?'Увімкнути світлий режим':'Увімкнути нічний режим');themeToggle.querySelector('.theme-icon').textContent=dark?'☀':'☾';themeToggle.querySelector('.theme-label').textContent=dark?'Світлий режим':'Нічний режим'};localStorage.setItem('skokHairProTheme',dark?'dark':'light')}
-applyTheme(savedTheme==='dark');
-if(themeToggle) themeToggle.addEventListener('click',()=>applyTheme(!document.documentElement.classList.contains('dark-mode')));
+localStorage.setItem('skokHairProTheme','light');
+localStorage.setItem('skokThemeResetV1','1');
+function applyTheme(){document.documentElement.classList.remove('dark-mode');document.documentElement.style.colorScheme='light';if(themeToggle){themeToggle.hidden=true;themeToggle.setAttribute('aria-pressed','false')}}
+applyTheme();
 
