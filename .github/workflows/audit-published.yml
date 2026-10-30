@@ -1,0 +1,33 @@
+name: Audit published storefront images
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.event.deployment_status.state == 'success' && contains(github.event.deployment_status.environment_url, 'rileex.github.io/ts')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Verify the live catalog and every gallery image in Chromium
+        run: node .github/scripts/audit-published.mjs
+      - name: Save desktop and mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-storefront-browser-audit
+          path: artifacts/
+          if-no-files-found: ignore
