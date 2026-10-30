@@ -43,6 +43,10 @@ async function inspectViewport(viewport, name) {
   if (extensionProbe.body !== "rgb(255, 255, 255)" || extensionProbe.text !== "rgb(29, 29, 31)" || extensionProbe.catalog !== "rgb(255, 255, 255)" || extensionProbe.firstCard !== "rgb(255, 255, 255)") {
     throw new Error(name + " dark-mode extension still produces unreadable colors: " + JSON.stringify(extensionProbe));
   }
+  const visualFilter = await page.evaluate(() => getComputedStyle(document.documentElement).filter);
+  if ((name === "desktop" && !visualFilter.includes("invert(1)")) || (name === "mobile" && visualFilter !== "none")) {
+    throw new Error(name + " viewport has unexpected inversion: " + visualFilter);
+  }
   const palette = await page.evaluate(() => ({
     darkMode: document.documentElement.classList.contains("dark-mode"),
     body: getComputedStyle(document.body).backgroundColor,
@@ -80,7 +84,7 @@ async function inspectViewport(viewport, name) {
   await page.locator("#productClose").dispatchEvent("click");
   await page.locator("#catalog").scrollIntoViewIfNeeded();
   await page.screenshot({ path: "artifacts/" + name + "-catalog.png", fullPage: false });
-  results[name] = { status: response.status(), palette, darkProbe, extensionProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length, purchaseButtons: buttonLayout };
+  results[name] = { status: response.status(), visualFilter, palette, darkProbe, extensionProbe, cards: cardInfo.length, firstProduct: cardInfo[0].name, detailGalleryImages: detail.thumbs.length, purchaseButtons: buttonLayout };
   await context.close();
 }
 
