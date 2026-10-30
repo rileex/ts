@@ -9,7 +9,7 @@
       const value = String(file || "").trim();
       if (!value) return "";
       const relative = value.startsWith("assets/") ? value : "assets/" + value.replace(/^\/+/, "");
-      return new URL(relative, document.baseURI).href;
+      return "https://raw.githubusercontent.com/rileex/ts/gh-pages/" + relative;
     };
     const rawAssetPath = file => {
       const value = String(file || "").trim();
