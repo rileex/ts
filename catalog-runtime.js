@@ -11,6 +11,19 @@
       const relative = value.startsWith("assets/") ? value : "assets/" + value.replace(/^\/+/, "");
       return new URL(relative, document.baseURI).href;
     };
+    const rawAssetPath = file => {
+      const value = String(file || "").trim();
+      if (!value) return "";
+      const relative = value.startsWith("assets/") ? value : "assets/" + value.replace(/^\/+/, "");
+      return "https://raw.githubusercontent.com/rileex/ts/gh-pages/" + relative;
+    };
+    const protectImage = (image, file) => {
+      if (!image || !file) return;
+      image.onerror = () => {
+        const fallback = rawAssetPath(file);
+        if (fallback && image.src !== fallback) image.src = fallback;
+      };
+    };
 
     products.length = 0;
     categories.length = 0;
@@ -36,12 +49,17 @@
       const thumbs = document.querySelector("#detailThumbs");
       if (image) {
         image.src = assetPath(item.photo);
+        protectImage(image, item.photo);
         image.alt = item.name + " — SKOK HAIR PRO";
       }
       if (description && item.description) description.textContent = item.description;
       if (meta) meta.textContent = "Артикул SK-" + String(index + 1).padStart(3, "0") + " · " + (item.category || "Догляд") + " · SKOK HAIR PRO";
       if (thumbs && Array.isArray(item.photos)) {
-        thumbs.innerHTML = item.photos.map(file => '<img src="' + assetPath(file) + '" alt="">').join("");
+        thumbs.innerHTML = item.photos.map(file => '<img src="' + assetPath(file) + '" data-raw-src="' + rawAssetPath(file) + '" alt="">').join("");
+        thumbs.querySelectorAll("img").forEach(thumb => {
+          const file = item.photos.find(value => assetPath(value) === thumb.src) || "";
+          protectImage(thumb, file);
+        });
       }
       document.querySelectorAll("#detailThumbs img").forEach(thumb => {
         thumb.addEventListener("click", () => {
@@ -59,15 +77,15 @@
       const image = card.querySelector("img");
       if (image && item) {
         image.src = assetPath(item.photo);
-        image.onerror = () => {
-          const fallback = Array.isArray(item.photos) ? item.photos[0] : "";
-          if (fallback && image.src !== assetPath(fallback)) image.src = assetPath(fallback);
-        };
+        protectImage(image, item.photo);
       }
     });
     document.querySelectorAll("#featuredTrack .featured-card img").forEach((image, index) => {
       const item = data.products[index];
-      if (item) image.src = assetPath(item.photo);
+      if (item) {
+        image.src = assetPath(item.photo);
+        protectImage(image, item.photo);
+      }
     });
 
     syncCart();
