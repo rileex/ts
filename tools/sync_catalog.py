@@ -98,17 +98,58 @@ def description_from_page(soup: BeautifulSoup, name: str) -> str:
     text = re.sub(r"Купити.*?Додати в обране", "", text, count=1)
     return clean(text)[:900]
 
-def image_urls(soup: BeautifulSoup) -> list[str]:
+def image_urls(soup: BeautifulSoup, product_name: str) -> list[str]:
+    # Read only the product gallery. The old site-wide img scan picked up
+    # header/branding imagery and copied it into every product directory.
+    selectors = (
+        ".woocommerce-product-gallery__wrapper",
+        ".woocommerce-product-gallery",
+        "[data-product-gallery]",
+        ".product-gallery",
+        ".product__gallery",
+        ".product-images",
+        ".product-image",
+        ".product-thumbnails",
+    )
+    containers = []
+    for selector in selectors:
+        containers.extend(soup.select(selector))
     found = []
-    for image in soup.select("img"):
-        values = [image.get("src"), image.get("data-src"), image.get("data-original"), image.get("data-lazy-src")]
-        values.extend(part.strip().split(" ", 1)[0] for part in image.get("srcset", "").split(",") if part.strip())
-        for value in values:
-            if not value:
-                continue
-            url = urljoin(BASE, value)
-            if "/Media/" in url and url not in found:
-                found.append(url)
+
+    def add(value: str | None) -> None:
+        if not value:
+            return
+        url = urljoin(BASE, value.strip())
+        if "/Media/" not in url:
+            return
+        filename = Path(unquote(urlparse(url).path)).name.casefold()
+        if any(token in filename for token in ("logo", "sprite", "favicon", "icon")):
+            return
+        if url not in found:
+            found.append(url)
+
+    for container in containers:
+        for image in container.select("img"):
+            for attr in ("data-large_image", "data-src", "data-original", "data-lazy-src", "src"):
+                add(image.get(attr))
+            for part in image.get("srcset", "").split(","):
+                if part.strip():
+                    add(part.strip().split()[0])
+        for anchor in container.select("a[href]"):
+            add(anchor.get("href"))
+
+    # Product themes sometimes omit a gallery wrapper. In that case only
+    # accept images explicitly labelled with the product heading.
+    if not found:
+        words = {word.casefold() for word in re.findall(r"[\wА-Яа-яІіЇїЄєҐґ]{4,}", product_name)}
+        for image in soup.select("img[alt], img[title]"):
+            labels = " ".join((image.get("alt", ""), image.get("title", ""))).casefold()
+            if words and sum(word in labels for word in words) >= min(2, len(words)):
+                for attr in ("data-large_image", "data-src", "data-original", "data-lazy-src", "src"):
+                    add(image.get(attr))
+                for part in image.get("srcset", "").split(","):
+                    if part.strip():
+                        add(part.strip().split()[0])
     return found
 
 def category_for(name: str) -> str:
@@ -224,41 +265,88 @@ def main() -> None:
         raise RuntimeError(f"Only {len(all_links)} product links found; refusing to publish partial catalog")
     ASSETS.mkdir(parents=True, exist_ok=True)
     products = []
-    for index, link in enumerate(all_links):
-        print(f"[{index + 1}/{len(all_links)}] {link}", flush=True)
-        soup = BeautifulSoup(get(link).text, "html.parser")
-        name = name_from_page(soup, link.rstrip("/").rsplit("/", 1)[-1].replace("-", " "))
-        if name.casefold() == "кошик" or "keune" in name.casefold():
-            continue
-        images = image_urls(soup)
-        if not images:
-            raise RuntimeError(f"No gallery images found for {link}")
-        product_dir = ASSETS / safe_slug(name, index + 1)
-        product_dir.mkdir(parents=True, exist_ok=True)
-        local_images = []
-        for image_index, image_url in enumerate(images[:12], 1):
-            response = get(image_url, binary=True, timeout=45, retries=3)
-            target = product_dir / f"{image_index}{extension_for(image_url, response)}"
-            target.write_bytes(response.content)
-            local_images.append(str(target).replace("\\", "/"))
-        products.append({
-            "name": name,
-            "price": price_from_page(soup, "Ціна уточнюється"),
-            "category": category_for(name),
-            "photo": local_images[0],
-            "photos": local_images,
-            "description": description_from_page(soup, name),
-        })
-        time.sleep(0.15)
+    primary_hashes: dict[str, list[str]] = {}
+    from hashlib import sha256
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent=HEADERS["User-Agent"],
+            locale="uk-UA",
+            viewport={"width": 1440, "height": 1000},
+        )
+        page = context.new_page()
+        for index, link in enumerate(all_links):
+            print(f"[{index + 1}/{len(all_links)}] browser product {link}", flush=True)
+            response = page.goto(link, wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_timeout(1200)
+            if response is None or response.status >= 400:
+                raise RuntimeError(f"Product page failed ({getattr(response, 'status', 'no response')}): {link}")
+            soup = BeautifulSoup(page.content(), "html.parser")
+            if not is_product_page(soup):
+                raise RuntimeError(f"Not a product page in browser session: {link}")
+            name = name_from_page(soup, link.rstrip("/").rsplit("/", 1)[-1].replace("-", " "))
+            if name.casefold() == "кошик" or "keune" in name.casefold():
+                continue
+            images = image_urls(soup, name)
+            if not images:
+                raise RuntimeError(f"No product-gallery images found in rendered browser page: {link}")
+
+            product_dir = ASSETS / safe_slug(name, index + 1)
+            product_dir.mkdir(parents=True, exist_ok=True)
+            local_images = []
+            for image_index, image_url in enumerate(images[:12], 1):
+                image_response = page.request.get(image_url, timeout=45000)
+                if not image_response.ok:
+                    raise RuntimeError(f"Image download failed ({image_response.status}): {image_url}")
+                content_type = image_response.headers.get("content-type", "").lower()
+                payload = image_response.body()
+                if not content_type.startswith("image/") or len(payload) < 1000:
+                    raise RuntimeError(f"Not a real image ({content_type}, {len(payload)} bytes): {image_url}")
+                target = product_dir / f"{image_index}{extension_for(image_url, requests.Response())}"
+                # Preserve the server's actual image format if the URL is extensionless.
+                if Path(target).suffix == ".jpg" and "png" in content_type:
+                    target = target.with_suffix(".png")
+                elif Path(target).suffix == ".jpg" and "webp" in content_type:
+                    target = target.with_suffix(".webp")
+                target.write_bytes(payload)
+                local_images.append(str(target).replace("\\", "/"))
+            if not local_images:
+                raise RuntimeError(f"Product has no downloaded images: {link}")
+            digest = sha256((product_dir / Path(local_images[0]).name).read_bytes()).hexdigest()
+            primary_hashes.setdefault(digest, []).append(name)
+            products.append({
+                "name": name,
+                "price": price_from_page(soup, "Ціна уточнюється"),
+                "category": category_for(name),
+                "photo": local_images[0],
+                "photos": local_images,
+                "description": description_from_page(soup, name),
+            })
+            time.sleep(0.4)
+        browser.close()
+
     if len(products) < 100 or sum(bool(item["photos"]) for item in products) != len(products):
         raise RuntimeError("Catalog validation failed: missing products or images")
+    repeated = [(digest, names) for digest, names in primary_hashes.items() if len(names) > 3]
+    if len(primary_hashes) < max(50, int(len(products) * 0.65)) or repeated:
+        detail = "; ".join(f"{len(names)} products share one image: {names[:4]}" for _, names in repeated[:5])
+        raise RuntimeError(
+            f"Image identity validation failed: only {len(primary_hashes)} unique primary images "
+            f"for {len(products)} products. {detail}"
+        )
     OUT.write_text(json.dumps({
         "brand": "SKOK HAIR PRO",
         "source": "catalog import",
         "count": len(products),
         "products": products,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {OUT} with {len(products)} products and {sum(len(p['photos']) for p in products)} images", flush=True)
+    print(
+        f"Wrote {OUT} with {len(products)} products, "
+        f"{sum(len(p['photos']) for p in products)} images and {len(primary_hashes)} unique primary photos",
+        flush=True,
+    )
 
 if __name__ == "__main__":
     main()
