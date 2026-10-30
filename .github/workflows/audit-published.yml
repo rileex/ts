@@ -1,14 +1,17 @@
 name: Audit published storefront images
 
 on:
-  deployment_status:
+  workflow_run:
+    workflows: ["Deploy static site to GitHub Pages"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   audit:
-    if: github.event.deployment_status.state == 'success' && contains(github.event.deployment_status.environment_url, 'rileex.github.io/ts')
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
