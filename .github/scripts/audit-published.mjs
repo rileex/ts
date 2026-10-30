@@ -26,7 +26,7 @@ async function inspectViewport(viewport, name) {
     document.documentElement.classList.remove("dark-mode");
     return value;
   });
-  if (darkProbe.body !== "rgb(255, 255, 255)" || darkProbe.text !== "rgb(29, 29, 31)") {
+  if (darkProbe.body !== "rgb(255, 255, 255)" || darkProbe.text !== "rgb(29, 29, 31)" || darkProbe.catalog !== "rgb(255, 255, 255)" || darkProbe.firstCard !== "rgb(255, 255, 255)") {
     throw new Error(name + " stale dark class still produces unreadable colors: " + JSON.stringify(darkProbe));
   }
   const palette = await page.evaluate(() => ({
