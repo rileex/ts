@@ -1,0 +1,4 @@
+newmtl Model001_Material001
+map_Kd traffic_plate_01.png
+map_bump bumpmap_alt.png
+
