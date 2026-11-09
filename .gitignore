@@ -73,3 +73,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Files above GitHub's 100 MB hard limit - kept out of the repo
+/Assets/Off_Road_Racing_3/Scene/Race_Track_1/LightingData.asset
+/Assets/Off_Road_Racing_3/Textures/Global/Desert/New Cubemap 2.cubemap
