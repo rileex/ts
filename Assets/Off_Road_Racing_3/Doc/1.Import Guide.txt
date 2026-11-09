@@ -1,0 +1,18 @@
+
+
+This package is for built-in rendering pipeline
+
+You need to create an empty project then import this package into it:
+
+Notes:
+- Post processing has been used for this project for graphics
+- Default settings is ready for mobile platforms
+- For other platforms you can add other advanced effects : SSR, Volumetric Lighting, Deferred rendering or ...
+
+Follow import Guide:
+https://youtu.be/-jBHJNCv65I
+
+____________________________________________________
+Please don't ask your question in the review section
+
+Please ask your problem here: ALIyerEdon@gmail.com
