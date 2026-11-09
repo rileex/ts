@@ -1,0 +1,167 @@
+fileFormatVersion: 2
+guid: bd8eba19210f1c644afbc5436d9ed5ae
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Barricade
+    100002: Big_stunt
+    100004: Cone
+    100006: Spiral_stunt
+    100008: Stunt_big
+    100010: Stunt_sm
+    100012: //RootNode
+    100014: Warning
+    400000: Barricade
+    400002: Big_stunt
+    400004: Cone
+    400006: Spiral_stunt
+    400008: Stunt_big
+    400010: Stunt_sm
+    400012: //RootNode
+    400014: Warning
+    2300000: Barricade
+    2300002: Big_stunt
+    2300004: Cone
+    2300006: Spiral_stunt
+    2300008: Stunt_big
+    2300010: Stunt_sm
+    2300012: Warning
+    3300000: Barricade
+    3300002: Big_stunt
+    3300004: Cone
+    3300006: Spiral_stunt
+    3300008: Stunt_big
+    3300010: Stunt_sm
+    3300012: Warning
+    4300000: Big_stunt
+    4300002: Spiral_stunt
+    4300004: Stunt_sm
+    4300006: Stunt_big
+    4300008: Warning
+    4300010: Cone
+    4300012: Barricade
+    6400000: Barricade
+    6400002: Big_stunt
+    6400004: Cone
+    6400006: Spiral_stunt
+    6400008: Stunt_big
+    6400010: Stunt_sm
+    6400012: Warning
+    9500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Barricade_mat
+    second: {fileID: 2100000, guid: fc2a7fa35a0dd264787a239bcf45cac0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Big_stunt_mat
+    second: {fileID: 2100000, guid: cde7535f208577e46a2ce48d9a60dae1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cone_mat
+    second: {fileID: 2100000, guid: 40e04a3ba3179234caa145af3e09469b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Spirral_stunt_mat
+    second: {fileID: 2100000, guid: 3a9531fca3a6b76409127bb2077ac7f7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stunt_big_mat
+    second: {fileID: 2100000, guid: 8f1fd80e8b167374daf62c18ae1d4a53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stunt_sm_mat
+    second: {fileID: 2100000, guid: b3b499b5cb7eec54b96450d3b2fe661f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Warning_mat
+    second: {fileID: 2100000, guid: a6ead7fd204186d43affcf44f93244b5, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.4
+    meshCompression: 0
+    addColliders: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+    previousCalculatedGlobalScale: 0.1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
