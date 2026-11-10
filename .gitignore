@@ -80,3 +80,7 @@ crashlytics-build.properties
 
 # Generated solution files
 *.slnx
+
+# Local Claude instructions (personal data)
+CLAUDE.md
+/Builds/

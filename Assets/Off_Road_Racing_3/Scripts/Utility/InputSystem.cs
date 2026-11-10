@@ -57,7 +57,10 @@ namespace ALIyerEdon
 
 			if (autoSwitchPlatform)
 			{
-#if UNITY_EDITOR || UNITY_WEBGL || UNITY_STANDALONE || UNITY_WSA || UNITY_64
+#if UNITY_WEBGL && !UNITY_EDITOR
+				// Browser: keyboard on desktop, on-screen touch controls on phones and tablets.
+				controlType = Application.isMobilePlatform ? InputType.Mobile : InputType.Keyboard;
+#elif UNITY_EDITOR || UNITY_STANDALONE || UNITY_WSA || UNITY_64
 				controlType = InputType.Keyboard;
 #else
 						controlType = InputType.Mobile;			

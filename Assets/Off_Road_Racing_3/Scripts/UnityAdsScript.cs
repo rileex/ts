@@ -42,6 +42,10 @@ public class UnityAdsScript : MonoBehaviour
     // Initialize the Ads listener and service:
     void Start()
     {
+#if UNITY_WEBGL
+        // Web builds show YouTube Playables ads through MicroCar.Web.AdService; AdMob is mobile-only.
+        return;
+#endif
         //        PlayerPrefs.SetInt("isShowAds", 1);
         //        Advertisement.AddListener(this);
         //        Advertisement.Initialize(gameId, testMode);
@@ -62,6 +66,10 @@ public class UnityAdsScript : MonoBehaviour
 
     private void OnLevelWasLoaded(int level)
     {
+#if UNITY_WEBGL
+        // Interstitials on the web are placed by MicroCar.Web.WebHost at the scene seams.
+        return;
+#endif
 
         if (Application.loadedLevel == 1)
         {

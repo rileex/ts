@@ -107,22 +107,29 @@ namespace ALIyerEdon
 
 		void Update()
 		{
-			// Exit with back button
+#if !UNITY_WEBGL
+			// Exit with back button (there is no "exit" in a browser game: Esc leaves fullscreen there)
 			if (Input.GetKeyDown(KeyCode.Escape))
 				exitMenu.SetActive(!exitMenu.activeSelf);
+#endif
 
+#if UNITY_EDITOR
+			// Debug cheats, editor only: H wipes the save, E adds money.
 			if (Input.GetKeyDown(KeyCode.H))
 			{
 				PlayerPrefs.DeleteAll();
 				Debug.Log("PlayerPrefs.DeleteAll ();");
 			}
 			if (Input.GetKeyDown(KeyCode.E))
-				PlayerPrefs.SetInt("Coins", PlayerPrefs.GetInt("Coins") + 14000);
+				PlayerPrefs.SetInt("TotalScores", PlayerPrefs.GetInt("TotalScores") + 14000);
+#endif
 		}
 
 		public void Exit()
 		{
+#if !UNITY_WEBGL
 			Application.Quit();
+#endif
 		}
 
 		public void SetTrue(GameObject target)

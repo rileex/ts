@@ -83,6 +83,10 @@ namespace ALIyerEdon
                 silverIcon.SetActive(false);
                 noAward.SetActive(true);
             }
+
+            // Rewarded ad: offer to pay the same prize again (MicroCar.Web.DoublePrizeOffer).
+            int prize = position == 0 ? goldAward : position == 1 ? bronzeAward : position == 2 ? silverAward : 0;
+            MicroCar.Web.DoublePrizeOffer.Show(finishRaceMenu, prize, totalScores);
         }
     }
 

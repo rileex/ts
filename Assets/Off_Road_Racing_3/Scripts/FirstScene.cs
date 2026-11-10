@@ -23,6 +23,11 @@ public class FirstScene : MonoBehaviour
     {
         yield return new WaitForSeconds(4f);
 
+        // The garage reads money and unlocks in its first frame: wait for the YouTube cloud save
+        // (answers within 3 s at worst, immediately off YouTube).
+        while (!MicroCar.Web.CloudSave.Ready)
+            yield return null;
+
         async = SceneManager.LoadSceneAsync(1);
 
         async.allowSceneActivation = true;

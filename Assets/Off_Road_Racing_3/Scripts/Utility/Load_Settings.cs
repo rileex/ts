@@ -1,4 +1,4 @@
-﻿//______________________________________________
+//______________________________________________
 // ALIyerEdon
 // https://assetstore.unity.com/publishers/23606
 //______________________________________________
@@ -135,7 +135,7 @@ namespace ALIyerEdon
             // Very Low
             if (qualityLevel == 0)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 0.5f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in
@@ -158,7 +158,7 @@ namespace ALIyerEdon
             //  Low
             if (qualityLevel == 1)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 0.5f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in
@@ -183,7 +183,7 @@ namespace ALIyerEdon
             //  Medium
             if (qualityLevel == 2)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.5f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 0.5f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in
@@ -210,7 +210,7 @@ namespace ALIyerEdon
             //  High
             if (qualityLevel == 3)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.7f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.7f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 0.7f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in
@@ -236,7 +236,7 @@ namespace ALIyerEdon
             //  Ultra
             if (qualityLevel == 4)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.77f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 0.77f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 0.77f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in
@@ -262,7 +262,7 @@ namespace ALIyerEdon
             //  Ultra
             if (qualityLevel == 5)
             {
-                Screen.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 1f),
+                MicroCar.Web.ScreenCompat.SetResolution((int)(PlayerPrefs.GetInt("OriginalX") * 1f),
                     (int)(PlayerPrefs.GetInt("OriginalY") * 1f), true);
 
                 foreach (UnityEngine.Rendering.PostProcessing.PostProcessLayer lll in

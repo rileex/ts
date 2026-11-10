@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>{{{ PRODUCT_NAME }}}</title>
+
+        <!--
+            YouTube Playables SDK. It MUST be the first script and its tag MUST carry only src -
+            McPlay pre-flight checks both. Everything the game says to the platform goes through
+            this one object (Assets/Plugins/WebGL/Playables.jslib, CloudSave.jslib).
+            Nothing else on this page may reach off-site: no CDNs, no fonts, no analytics.
+            Template ported from Car Simulator Open City Stunts (passed pre-flight + certification).
+        -->
+        <script src="https://www.youtube.com/game_api/v1"></script>
+
+        <!--
+            A paused game has to stop, not just stand still. Module.pauseMainLoop() stops the
+            requestAnimationFrame loop, but the engine also ticks through emscripten_set_interval.
+            That interval is caught here, before the framework exists, and gated on the flag that
+            Playables.jslib raises in ytgame.system.onPause and lowers in onResume.
+        -->
+        <script>
+            (function () {
+                var native = window.setInterval;
+                window.__microHostPaused = false;
+                window.setInterval = function (fn, ms) {
+                    if (typeof fn === 'function' && String(fn).indexOf('callUserCallback') >= 0) {
+                        var engine = fn;
+                        arguments[0] = function () {
+                            if (!window.__microHostPaused) {
+                                return engine.apply(this, arguments);
+                            }
+                        };
+                    }
+                    return native.apply(window, arguments);
+                };
+            })();
+        </script>
+
+        <!--
+            A media element only accepts playback rates 1/16..16 and Unity 6 sometimes hands music
+            elements ~0.00001, which the browser refuses with a console error. The certification
+            preview reads the console, so a rate the browser would refuse anyway is not passed on.
+        -->
+        <script>
+            (function () {
+                var rate = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'playbackRate');
+                if (!rate || !rate.set) return;
+                Object.defineProperty(HTMLMediaElement.prototype, 'playbackRate', {
+                    configurable: true,
+                    enumerable: rate.enumerable,
+                    get: rate.get,
+                    set: function (v) {
+                        if (v >= 0.0625 && v <= 16) rate.set.call(this, v);
+                    },
+                });
+            })();
+        </script>
+
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                padding: 0px;
+                margin: 0px;
+                overflow: hidden;
+                background: #1a1410;
+            }
+            .fullscreen-canvas {
+                background: #1a1410;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
+
+            /* Loading screen in HTML: it paints immediately, long before the engine has arrived. */
+            #boot {
+                --art: min(58vw, 42vh);
+                position: absolute;
+                inset: 0;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 22px;
+                background: #1a1410;
+                font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+                transition: opacity .45s ease;
+                z-index: 2;
+            }
+            #boot.gone { opacity: 0; pointer-events: none; }
+            #boot img {
+                width: var(--art);
+                height: var(--art);
+                object-fit: cover;
+                border-radius: calc(var(--art) * .062);
+                box-shadow: 0 calc(var(--art) * .08) calc(var(--art) * .22) calc(var(--art) * -.09) rgba(0, 0, 0, .9);
+            }
+            #boot-track {
+                width: var(--art);
+                height: 8px;
+                border-radius: 2px;
+                background: rgba(255, 255, 255, .13);
+                overflow: hidden;
+            }
+            #boot-fill {
+                width: 0%;
+                height: 100%;
+                border-radius: 3px;
+                background: repeating-linear-gradient(-45deg, #FFB000 0 7.78px, #FF8A00 7.78px 15.56px);
+                transition: width .25s ease;
+            }
+            #boot-note {
+                min-height: 1.2em;
+                color: #d8c9b8;
+                font-size: 14px;
+                text-align: center;
+                padding: 0 24px;
+                max-width: 34em;
+            }
+            #boot-note.bad { color: #ff9a8b; }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas" class="fullscreen-canvas" tabindex="-1"></canvas>
+
+        <div id="boot">
+            <img id="boot-art" src="loading.jpg" alt="{{{ PRODUCT_NAME }}}">
+            <div id="boot-track"><div id="boot-fill"></div></div>
+            <div id="boot-note"></div>
+        </div>
+
+        <script>
+            (function () {
+                var boot = document.getElementById('boot')
+                var fill = document.getElementById('boot-fill')
+                var note = document.getElementById('boot-note')
+
+                window.boot = {
+                    progress: function (fraction) {
+                        fill.style.width = Math.max(0, Math.min(1, fraction)) * 100 + '%'
+                    },
+
+                    // Unity reports start-up trouble here (config.showBanner) - errors stay visible.
+                    message: function (text, type) {
+                        note.textContent = text
+                        note.className = type === 'error' ? 'bad' : ''
+                    },
+
+                    done: function () {
+                        window.boot.progress(1)
+                        boot.classList.add('gone')
+                        setTimeout(function () {
+                            if (boot.parentNode) boot.parentNode.removeChild(boot)
+                        }, 600)
+                    },
+                }
+
+                window.unityBootConfig = {
+                    // A phone at 3x would draw nine times the fragments for the same picture.
+                    devicePixelRatio: 1,
+                    showBanner: window.boot.message,
+                    autoSyncPersistentDataPath: true,
+                }
+
+                // firstFrameReady as soon as our own loading screen is on screen, so YouTube
+                // takes its spinner away and the player sees that the game is loading. Frame
+                // callback or timer, whichever comes first (a hidden frame gets no rAF at all).
+                var said = false
+                function ready() {
+                    if (said) return
+                    said = true
+                    if (typeof ytgame !== 'undefined' && ytgame.game && ytgame.game.firstFrameReady) {
+                        try { ytgame.game.firstFrameReady() } catch (e) { }
+                    }
+                }
+                requestAnimationFrame(function () { requestAnimationFrame(ready) })
+                setTimeout(ready, 250)
+            })()
+        </script>
+
+        <script>
+            (function () {
+                var canvas = document.getElementById('canvas')
+
+                var loader = document.createElement('script')
+                loader.src = 'Build/{{{ LOADER_FILENAME }}}'
+
+                loader.onload = function () {
+                    var config = {
+                        dataUrl: 'Build/{{{ DATA_FILENAME }}}',
+                        frameworkUrl: 'Build/{{{ FRAMEWORK_FILENAME }}}',
+                        codeUrl: 'Build/{{{ CODE_FILENAME }}}',
+#if MEMORY_FILENAME
+                        memoryUrl: 'Build/{{{ MEMORY_FILENAME }}}',
+#endif
+#if SYMBOLS_FILENAME
+                        symbolsUrl: 'Build/{{{ SYMBOLS_FILENAME }}}',
+#endif
+                        streamingAssetsUrl: 'StreamingAssets',
+                        companyName: '{{{ COMPANY_NAME }}}',
+                        productName: '{{{ PRODUCT_NAME }}}',
+                        productVersion: '{{{ PRODUCT_VERSION }}}',
+                    }
+
+                    for (var key in window.unityBootConfig) {
+                        config[key] = window.unityBootConfig[key]
+                    }
+
+                    createUnityInstance(canvas, config, window.boot.progress)
+                        .then(function (instance) {
+                            window.unityInstance = instance
+                            canvas.focus()
+                            window.boot.done()
+                        })
+                        .catch(function (error) {
+                            console.error(error)
+                            window.boot.message('The game could not start: ' + error, 'error')
+                        })
+                }
+
+                document.body.appendChild(loader)
+            })()
+        </script>
+    </body>
+</html>
