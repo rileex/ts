@@ -66,6 +66,15 @@ Project Zombik — `D:\UnityProjects\ExtremeGames_TestTask_Unity_6000\ZombieTask
 - Модели: сжатие мешей Medium (глобально; Read/Write не трогается — повреждения машин правят вершины).
 - Если `.data` снова подберётся к 30 MiB — следующий шаг, как в Car Simulator: Addressables (гараж и трасса отдельными бандлами).
 
+## Как проверять в браузере
+- `node Tools/serve-webgl.js` → http://127.0.0.1:8099/. Окно браузера должно быть **на переднем плане**: Chromium
+  притормаживает фоновые/перекрытые окна до ~1 кадра в секунду, и игра выглядит «зависшей» (картинка не обновляется,
+  клики будто не работают). Встроенная панель браузера Claude тоже под это попадает.
+- `?debug=input` в адресе включает `Assets/_Web/InputProbe.cs`: каждое нажатие пишет в консоль, во что попал луч UI и почему
+  кнопка его не приняла. Без параметра ничего не делает.
+- В режиме эмуляции экрана инструменты браузера могут пересчитывать координаты клика иначе, чем рисуется страница —
+  сверяйтесь с логом InputProbe.
+
 ## Описание рекламы для карточки McPlay (черновик)
 - **Rewarded:** only from a button the player presses. On the race finish screen, after a prize is won, the player can watch an ad to receive the same prize again ("AD: x2"). The prize is added only when the SDK reports the ad was watched.
 - **Interstitial:** only at scene changes, never during a race: when the player starts a race from the garage, leaves a race back to the garage, or restarts a race. Not more often than once per 60 seconds and not in the first minute after the pre-roll.
@@ -76,9 +85,19 @@ Project Zombik — `D:\UnityProjects\ExtremeGames_TestTask_Unity_6000\ZombieTask
 - 10.11.2026 — WebGL-сборка проходит лимит McPlay: `.data` 28.9 MiB (< 30 MiB), всего 34.3 MiB (было 157 MiB одним файлом).
   Локально (`Tools/serve-webgl.js`): загрузчик распаковывает Brotli сам, `ytgame` подгружается, гараж открывается, ошибок в консоли нет.
   Исправлено: `WebHost.OnHostPause/OnHostAudio` совпадали по имени с сообщениями страницы → `MissingMethodException` в браузере.
-  Не проверено: проход меню → заезд → финиш в видимом браузере и на телефоне, реклама и сохранения внутри YouTube (только в McPlay/YouTube).
+- 10.11.2026 — проход гараж → выбор уровня → машина → заезд → финиш → «AD: x2» → выход в гараж (Play Mode в редакторе, кнопки нажимались
+  через их onClick, финиш — `Race_Manager.Finish_Race()`): работает, ошибок нет. Исправлено по ходу:
+  - кнопка «AD: x2» закрывала кнопку Exit на экране финиша (выйти в гараж было нельзя) — теперь стоит над Restart;
+  - `LevelSelect.Start` падал с NullReferenceException на пустых слотах уровней (в шаблоне слотов больше, чем уровней);
+    на WebGL такие исключения не ловятся (ExplicitlyThrownExceptionsOnly) — добавлены проверки.
+  В браузере (сборка + `Tools/serve-webgl.js`): загрузка, гараж, настройки, открытие выбора уровня — работают; консоль чистая.
+  До исправления `LevelSelect` браузерная сборка **падала** при открытии выбора уровня (`RuntimeError: null function`,
+  `Halting program`) — так на WebGL выглядит NullReferenceException при ExplicitlyThrownExceptionsOnly.
+  Не проверено: заезд в браузере и на телефоне (тач), реклама и облачные сохранения внутри YouTube (только в McPlay/YouTube).
 
 ## Что ещё не сделано
+- Стартовый счёт нового игрока — **123 000** (`Garage.unity`, `MainUtility.startingScore`; в скрипте по умолчанию 1 400): всё покупается сразу, награда «x2» теряет смысл. Похоже на тестовое значение — решить с Артемом.
+- В гараже на полке — постеры других игр («Brick Car Crash Online», «Derby Forever», «Next Gen Offroad», из шаблона): реклама чужих игр может не пройти модерацию YouTube — заменить на свои картинки или убрать.
 - `.data` 28.9 MiB — запас до 30 MiB около 1 МБ, а желательно < 15 МБ: новый контент сначала через `WebShrink`, при росте — Addressables.
 - Портретный режим UI (сейчас интерфейс только альбомный; McPlay проверяет отсутствие блокировки ориентации, YouTube смотрит, как игра выглядит в портрете).
 - Обложки 5:7 / 1:1 / 16:9 и нормальная картинка загрузки (`WebGLTemplates/YouTube/loading.jpg` сейчас — кадр из сцены).

@@ -45,6 +45,9 @@
 - ~~`Screen.SetResolution` при смене качества~~ — в браузере не вызывается (`ScreenCompat`).
 - ~~На WebGL всегда клавиатура~~ — в мобильном браузере включается тач-управление.
 - UI только альбомный (CanvasScaler 1280×720, match 0.5).
+- ~~`LevelSelect.Start`: NullReferenceException на пустых слотах уровней~~ — исправлено (в WebGL это роняло игру).
+- `Garage.unity`: `MainUtility.startingScore = 123000` (в скрипте 1 400) — новый игрок стартует со 123 000 очков.
+- Постеры чужих игр на полке в гараже (из шаблона).
 - В шаблоне перепутаны медали: 2-е место получает иконку/приз «bronze» (2000), 3-е — «silver» (1000) (`Start_Finish_UI.cs`).
 - Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, `productName: OffroadRacing`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`.
 - Camera Filter Pack: в `Resources` оставлен только фильтр TV_ARCADE, остальные — в `Camera Filter Pack/NotInBuild` (см. [YouTube-Playables.md](YouTube-Playables.md#размер-сборки)).

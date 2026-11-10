@@ -7,8 +7,10 @@ namespace MicroCar.Web
     /// The rewarded-ad placement: "watch an ad to double the prize" on the race finish screen.
     ///
     /// <para>
-    /// Built at run time as a copy of the finish screen's Restart button (mirrored to the left), so
-    /// the scene file does not change. Shown only when the race paid a prize, once per race, and the
+    /// Built at run time as a copy of the finish screen's Restart button, stacked right above it, so
+    /// the scene file does not change. Not mirrored to the left: that is where the race scene's Exit
+    /// button sits after the finish, and covering it left the player no way back to the garage.
+    /// The right-hand column above Restart is clear of the racer list's text. Shown only when the race paid a prize, once per race, and the
     /// prize is added again only when the platform reports the ad was actually watched.
     /// </para>
     /// </summary>
@@ -37,13 +39,13 @@ namespace MicroCar.Web
 
             var rt = (RectTransform)copy.transform;
             var src = (RectTransform)restart;
-            rt.anchoredPosition = new Vector2(-src.anchoredPosition.x, src.anchoredPosition.y);
-            rt.sizeDelta = new Vector2(src.sizeDelta.x * 1.6f, src.sizeDelta.y);
+            rt.anchoredPosition = src.anchoredPosition + new Vector2(0f, src.rect.height + 12f);
+            rt.sizeDelta = src.sizeDelta;
 
             var label = copy.GetComponentInChildren<Text>(true);
             if (label != null)
             {
-                label.text = "AD: x2  +" + prize;
+                label.text = "AD: x2\n+" + prize;
                 label.resizeTextForBestFit = true;
                 label.resizeTextMinSize = 14;
                 label.resizeTextMaxSize = label.fontSize;

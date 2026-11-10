@@ -61,6 +61,10 @@ namespace ALIyerEdon
 			for (int l = 0; l < levelPriceText.Length; l++)
 			{
 				// Enable lock and level price displays
+				// The template ships more slots than levels; empty ones are skipped (a null here is a
+				// NullReferenceException in the editor and undefined behaviour in the WebGL player).
+				if (l >= levelLocks.Length || levelLocks[l] == null) continue;
+
 				if (PlayerPrefs.GetInt("Level" + l.ToString()) == 3)
 					levelLocks[l].SetActive(false);
 				else
@@ -71,6 +75,8 @@ namespace ALIyerEdon
 			// Update current level value text
 			for (int a = 0; a < levelPriceText.Length; a++)
 			{
+				if (levelPriceText[a] == null || a >= levelPrices.Length) continue;
+
 				if (PlayerPrefs.GetInt("Level" + a.ToString()) == 3)
 					levelPriceText[a].text = "";
 				else
@@ -80,6 +86,8 @@ namespace ALIyerEdon
 			// Update award icons
 			for (int aw = 0; aw < awardIcons.Length; aw++)
 			{
+				if (awardIcons[aw] == null) continue;
+
 				if (PlayerPrefs.GetInt("Award_Level_" + aw.ToString()) == 0)
 					awardIcons[aw].sprite = goldAward;
 
