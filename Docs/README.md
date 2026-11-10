@@ -1,4 +1,4 @@
-# MicroCarReady — документация проекта
+# MicroCar Racing (проект MicroCarReady) — документация
 
 Офроуд-гонка на радиоуправляемых машинках. Unity **6000.3.9f1**, Built-in Render Pipeline + Post Processing v2.
 Основа — ассет-шаблон «Off Road Racing 3» (namespace `ALIyerEdon`) + RealRacingCarsDetach.
@@ -50,5 +50,5 @@
 - Постеры других игр на полке в гараже (из шаблона) — решено оставить (10.11.2026).
 - Play в редакторе меняет общие материалы фар (`BackLight.mat`, `Light.mat`, `Light_2.mat` — `_EmissionColor` пишут скрипты шаблона: EasyCarController и др.). Эти изменения не коммитить: `git checkout -- <файл>`.
 - В шаблоне перепутаны медали: 2-е место получает иконку/приз «bronze» (2000), 3-е — «silver» (1000) (`Start_Finish_UI.cs`).
-- Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, `productName: OffroadRacing`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`.
+- Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`. (`productName` теперь `MicroCar Racing`.)
 - Camera Filter Pack: в `Resources` оставлен только фильтр TV_ARCADE, остальные — в `Camera Filter Pack/NotInBuild` (см. [YouTube-Playables.md](YouTube-Playables.md#размер-сборки)).

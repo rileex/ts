@@ -4,7 +4,7 @@
 
 | Параметр | Сейчас | Нужно |
 |---|---|---|
-| Company / Product name | SmartMove / OffroadRacing | Наши |
+| Company / Product name | SmartMove / MicroCar Racing | Company — наша студия (product переименован 10.11.2026) |
 | Android bundle id | `com.ALIyerEdon.MudRacer` (от шаблона) | Свой, например `com.<студия>.microcar` |
 | iOS bundle id | не задан | Свой |
 | Версия | bundleVersion 3, versionCode 3 | По нашей схеме |
