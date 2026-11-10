@@ -153,6 +153,7 @@
                     },
 
                     done: function () {
+                        if (boot.classList.contains('gone')) return
                         window.boot.progress(1)
                         boot.classList.add('gone')
                         setTimeout(function () {
@@ -216,7 +217,12 @@
                         .then(function (instance) {
                             window.unityInstance = instance
                             canvas.focus()
-                            window.boot.done()
+                            // The loading screen stays until the game says the garage is up
+                            // (Playables.jslib, MicroPlayableReady -> boot.done), so the engine's
+                            // white splash scene is never seen. A safety net in case that call
+                            // never comes: the player must not be left behind a loading screen.
+                            window.boot.progress(1)
+                            setTimeout(window.boot.done, 20000)
                         })
                         .catch(function (error) {
                             console.error(error)

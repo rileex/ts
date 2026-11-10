@@ -31,7 +31,7 @@ Project Zombik — `D:\UnityProjects\ExtremeGames_TestTask_Unity_6000\ZombieTask
 | `DoublePrizeOffer.cs` | Rewarded: кнопка «AD: x2 +N» на экране финиша (копия Restart), повторно начисляет приз только если реклама досмотрена |
 | `ScreenCompat.cs` | `Screen.SetResolution` не вызывается в браузере |
 | `PortraitFit.cs` | Экран уже 16:9 и портрет (см. «Портретный режим») |
-| `WebGLTemplates/YouTube/index.html` | SDK первым тегом, firstFrameReady со страницы, остановка цикла движка на паузе, devicePixelRatio = 1, ошибки видны на экране загрузки |
+| `WebGLTemplates/YouTube/index.html` | SDK первым тегом, firstFrameReady со страницы, остановка цикла движка на паузе, devicePixelRatio = 1, ошибки видны на экране загрузки. Экран загрузки держится до gameReady (гараж на экране; страховка — 20 с), так что белая сцена-заставка движка не видна; в браузере она и без 4-секундной паузы (`FirstScene.cs`) |
 | `Editor/WebBuild.cs` | Меню **Build → YouTube Playables (WebGL)** и batch `WebBuild.YouTube`: сначала `WebShrink.ApplyAll`, потом Brotli + распаковщик в загрузчике, DXT, без заставки Unity, отчёт по размерам файлов, zip `Builds/MicroCar-YouTube.zip` |
 | `Editor/WebShrink.cs` | Вес веб-сборки: отчёт `Builds/shrink-report.txt` и WebGL-переопределения импорта (см. ниже) |
 | `Tools/serve-webgl.js` | Локальная проверка: `node Tools/serve-webgl.js` → http://127.0.0.1:8099/ (файлы отдаются как есть — распаковывает сам загрузчик, как на McPlay) |

@@ -14,6 +14,13 @@ mergeInto(LibraryManager.library, {
     },
 
     MicroPlayableReady: function () {
+        // The page's loading screen stays up over the canvas until now (index.html), so the
+        // player never sees the engine's own splash scene - it goes straight to the garage.
+        try {
+            if (window.boot && window.boot.done) window.boot.done();
+        } catch (e) {
+        }
+
         if (typeof ytgame === 'undefined' || !ytgame.game || !ytgame.game.gameReady) {
             return;
         }

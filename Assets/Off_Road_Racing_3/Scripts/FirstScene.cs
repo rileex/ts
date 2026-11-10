@@ -21,7 +21,13 @@ public class FirstScene : MonoBehaviour
 
     private IEnumerator LoadNextScene()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // In the browser the page's own loading screen covers this scene (index.html keeps it up
+        // until gameReady), so a 4-second splash here is only time the player waits for nothing.
+        yield return null;
+#else
         yield return new WaitForSeconds(4f);
+#endif
 
         // The garage reads money and unlocks in its first frame: wait for the YouTube cloud save
         // (answers within 3 s at worst, immediately off YouTube).

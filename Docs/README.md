@@ -17,7 +17,7 @@
 ## Сцены (Build Settings)
 | # | Сцена | Что делает |
 |---|---|---|
-| 0 | `Off_Road_Racing_3/Scene/1_firstScene` | Заставка 4 с, асинхронная загрузка гаража; здесь живёт объект рекламы (`UnityAdsScript`, DontDestroyOnLoad) |
+| 0 | `Off_Road_Racing_3/Scene/1_firstScene` | Заставка 4 с (в браузере — без паузы и под HTML-экраном загрузки), асинхронная загрузка гаража; здесь живёт объект рекламы (`UnityAdsScript`, DontDestroyOnLoad) |
 | 1 | `Off_Road_Racing_3/Scene/Garage` | Меню: выбор/покупка машины (`CarSelect`), уровни (`LevelSelect`), настройки (`SettingsMenu`), `MainUtility` |
 | 2 | `Off_Road_Racing_3/Scene/Village` | Гонка: `Race_Manager` спавнит машину игрока и AI. Свет — `Scene/Village/LightingData.asset` (перезапечён, см. [Lighting.md](Lighting.md)) |
 | — | `Race_Track_2`, `Race_Track_3` | Выключены в сборке |
