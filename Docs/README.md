@@ -10,7 +10,7 @@
 | [Lighting.md](Lighting.md) | Запекание света и теней, бюджет размера |
 
 ## Репозиторий
-- GitHub: https://github.com/rileex/ts (планируется переименование в `microcarready`).
+- GitHub: https://github.com/rileex/ts.
 - Ветка `main` — Unity-проект. Ветка `site-backup` — сайт-каталог, который лежал в репозитории раньше; `gh-pages` — его публикация.
 - `Library/`, `Logs/`, `obj/`, `Builds/`, `CLAUDE.md` в git не попадают.
 
@@ -47,7 +47,7 @@
 - UI только альбомный (CanvasScaler 1280×720, match 0.5).
 - ~~`LevelSelect.Start`: NullReferenceException на пустых слотах уровней~~ — исправлено (в WebGL это роняло игру).
 - ~~`Garage.unity`: `MainUtility.startingScore = 123000`~~ — теперь 1 400, как в скрипте.
-- Постеры чужих игр на полке в гараже (из шаблона).
+- Постеры других игр на полке в гараже (из шаблона) — решено оставить (10.11.2026).
 - В шаблоне перепутаны медали: 2-е место получает иконку/приз «bronze» (2000), 3-е — «silver» (1000) (`Start_Finish_UI.cs`).
 - Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, `productName: OffroadRacing`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`.
 - Camera Filter Pack: в `Resources` оставлен только фильтр TV_ARCADE, остальные — в `Camera Filter Pack/NotInBuild` (см. [YouTube-Playables.md](YouTube-Playables.md#размер-сборки)).
