@@ -84,6 +84,22 @@ Project Zombik — `D:\UnityProjects\ExtremeGames_TestTask_Unity_6000\ZombieTask
 - В режиме эмуляции экрана инструменты браузера могут пересчитывать координаты клика иначе, чем рисуется страница —
   сверяйтесь с логом InputProbe.
 
+## Обложки
+Название игры — **MicroCar Racing** (решено 10.11.2026). Файлы в `Art/Covers/`:
+
+| Файл | Размер | Для чего |
+|---|---|---|
+| `cover_5x7.jpg` | 1080×1512 | Обложка 5:7 (McPlay просит ≥ 270×378) |
+| `cover_1x1.jpg` | 1080×1080 | Обложка 1:1 (≥ 512) |
+| `cover_16x9.jpg` | 1920×1080 | Обложка 16:9 (≥ 1280×720) |
+| `logo.png` | прозрачный | Логотип отдельно |
+| `Assets/WebGLTemplates/YouTube/loading.jpg` | 640×640 | Картинка на экране загрузки (из 1:1) |
+
+Картинка — настоящие кадры игры (трасса Village, багги игрока и пикап соперника), отрендеренные в редакторе клоном
+гоночной камеры с её пост-обработкой в 2× размере; поверх — только лёгкая цветокоррекция и логотип (Impact + Arial Black).
+Пересобрать: исходники кладутся в `Builds/covers/raw/` (`wide3.png` 3840×2160, `sq1.png` 2160×2160, `tall4.png` 2160×3024),
+затем `python Tools/make-covers.py`. Исходники в git не попадают (папка `Builds/`).
+
 ## Описание рекламы для карточки McPlay (черновик)
 - **Rewarded:** only from a button the player presses. On the race finish screen, after a prize is won, the player can watch an ad to receive the same prize again ("AD: x2"). The prize is added only when the SDK reports the ad was watched.
 - **Interstitial:** only at scene changes, never during a race: when the player starts a race from the garage, leaves a race back to the garage, or restarts a race. Not more often than once per 60 seconds and not in the first minute after the pre-roll.
@@ -109,6 +125,5 @@ Project Zombik — `D:\UnityProjects\ExtremeGames_TestTask_Unity_6000\ZombieTask
 
 ## Что ещё не сделано
 - `.data` 28.9 MiB — запас до 30 MiB около 1 МБ, а желательно < 15 МБ: новый контент сначала через `WebShrink`, при росте — Addressables.
-- Обложки 5:7 / 1:1 / 16:9 и нормальная картинка загрузки (`WebGLTemplates/YouTube/loading.jpg` сейчас — кадр из сцены).
 - Авторы музыки для карточки.
 - Проверка тач-управления на телефоне.
