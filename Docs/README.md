@@ -49,6 +49,6 @@
 - ~~`Garage.unity`: `MainUtility.startingScore = 123000`~~ — теперь 1 400, как в скрипте.
 - Постеры других игр на полке в гараже (из шаблона) — решено оставить (10.11.2026).
 - Play в редакторе меняет общие материалы фар (`BackLight.mat`, `Light.mat`, `Light_2.mat` — `_EmissionColor` пишут скрипты шаблона: EasyCarController и др.). Эти изменения не коммитить: `git checkout -- <файл>`.
-- В шаблоне перепутаны медали: 2-е место получает иконку/приз «bronze» (2000), 3-е — «silver» (1000) (`Start_Finish_UI.cs`).
+- ~~В шаблоне перепутаны медали: 2-е место получало бронзу, 3-е — серебро~~ — исправлено 10.11.2026 в коде (`Start_Finish_UI.cs`, `LevelSelect.cs`): 1-е золото 3000, 2-е серебро 2000, 3-е бронза 1000; сцены не менялись (поля призов переименованы по местам — `secondPlaceAward`/`thirdPlaceAward`, старые значения подхватываются через `FormerlySerializedAs`). Сохранения игроков не затронуты: `Award_Level_{n}` хранит место, а не медаль.
 - Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`. (`productName` теперь `MicroCar Racing`.)
 - Camera Filter Pack: в `Resources` оставлен только фильтр TV_ARCADE, остальные — в `Camera Filter Pack/NotInBuild` (см. [YouTube-Playables.md](YouTube-Playables.md#размер-сборки)).

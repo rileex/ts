@@ -83,7 +83,8 @@ namespace ALIyerEdon
 					levelPriceText[a].text = "Price : " + levelPrices[a].ToString();
 			}
 
-			// Update award icons
+			// Update award icons. "Award_Level_n" holds the best finishing place (0 = 1st ... 3 = none):
+			// 2nd place is silver and 3rd bronze (the template had them the other way round).
 			for (int aw = 0; aw < awardIcons.Length; aw++)
 			{
 				if (awardIcons[aw] == null) continue;
@@ -92,10 +93,10 @@ namespace ALIyerEdon
 					awardIcons[aw].sprite = goldAward;
 
 				if (PlayerPrefs.GetInt("Award_Level_" + aw.ToString()) == 1)
-					awardIcons[aw].sprite = bronzeAward;
+					awardIcons[aw].sprite = silverAward;
 
 				if (PlayerPrefs.GetInt("Award_Level_" + aw.ToString()) == 2)
-					awardIcons[aw].sprite = silverAward;
+					awardIcons[aw].sprite = bronzeAward;
 
 				if (PlayerPrefs.GetInt("Award_Level_" + aw.ToString()) == 3)
 					awardIcons[aw].sprite = noneAward;

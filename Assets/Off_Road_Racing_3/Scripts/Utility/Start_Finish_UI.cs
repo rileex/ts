@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ALIyerEdon;
 
 namespace ALIyerEdon
@@ -30,13 +31,15 @@ namespace ALIyerEdon
         public GameObject silverIcon;
         public GameObject noAward;
 
-        // Give scores
+        // Give scores, by finishing place. The template named these after the medal it showed
+        // (2nd place "bronze" 2000, 3rd place "silver" 1000), which put the medals the wrong way
+        // round; the old names keep the values already saved in the race scenes.
         [Header("Scores ____________________________________________________" +
             "____________________________________________________")]
         [Space(5)]
         public int goldAward = 3000;
-        public int bronzeAward = 2000;
-        public int silverAward = 1000;
+        [FormerlySerializedAs("bronzeAward")] public int secondPlaceAward = 2000;
+        [FormerlySerializedAs("silverAward")] public int thirdPlaceAward = 1000;
 
         // Update player's position
         [Header("Positions ____________________________________________________" +
@@ -51,41 +54,17 @@ namespace ALIyerEdon
             if (PlayerPrefs.GetInt("Award_Level_" + level_ID.ToString()) > position)
                 PlayerPrefs.SetInt("Award_Level_" + level_ID.ToString(), position);
 
-            // Enable disable award icons (gold, bronze, silver)
-            if (position == 0)
-            {
-                goldIcon.SetActive(true);
-                bronzeIcon.SetActive(false);
-                silverIcon.SetActive(false);
-                noAward.SetActive(false);
-                PlayerPrefs.SetInt("TotalScores", PlayerPrefs.GetInt("TotalScores") + goldAward);
-            }
-            if (position == 1)
-            {
-                goldIcon.SetActive(false);
-                bronzeIcon.SetActive(true);
-                silverIcon.SetActive(false);
-                noAward.SetActive(false);
-                PlayerPrefs.SetInt("TotalScores", PlayerPrefs.GetInt("TotalScores") + bronzeAward);
-            }
-            if (position == 2)
-            {
-                goldIcon.SetActive(false);
-                bronzeIcon.SetActive(false);
-                silverIcon.SetActive(true);
-                noAward.SetActive(false);
-                PlayerPrefs.SetInt("TotalScores", PlayerPrefs.GetInt("TotalScores") + silverAward);
-            }
-            if (position == 3)
-            {
-                goldIcon.SetActive(false);
-                bronzeIcon.SetActive(false);
-                silverIcon.SetActive(false);
-                noAward.SetActive(true);
-            }
+            // Award icons: 1st gold, 2nd silver, 3rd bronze, anything else none.
+            goldIcon.SetActive(position == 0);
+            silverIcon.SetActive(position == 1);
+            bronzeIcon.SetActive(position == 2);
+            noAward.SetActive(position > 2);
+
+            int prize = position == 0 ? goldAward : position == 1 ? secondPlaceAward : position == 2 ? thirdPlaceAward : 0;
+            if (prize > 0)
+                PlayerPrefs.SetInt("TotalScores", PlayerPrefs.GetInt("TotalScores") + prize);
 
             // Rewarded ad: offer to pay the same prize again (MicroCar.Web.DoublePrizeOffer).
-            int prize = position == 0 ? goldAward : position == 1 ? bronzeAward : position == 2 ? silverAward : 0;
             MicroCar.Web.DoublePrizeOffer.Show(finishRaceMenu, prize, totalScores);
         }
     }
