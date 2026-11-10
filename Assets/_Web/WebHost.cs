@@ -83,26 +83,29 @@ namespace MicroCar.Web
         void Awake()
         {
             instance = this;
-            Playables.HostPauseChanged += OnHostPause;
-            Playables.HostAudioChanged += OnHostAudio;
+            Playables.HostPauseChanged += HandleHostPause;
+            Playables.HostAudioChanged += HandleHostAudio;
             SceneManager.sceneLoaded += OnSceneLoaded;
             CloudSave.Request();
         }
 
         void OnDestroy()
         {
-            Playables.HostPauseChanged -= OnHostPause;
-            Playables.HostAudioChanged -= OnHostAudio;
+            Playables.HostPauseChanged -= HandleHostPause;
+            Playables.HostAudioChanged -= HandleHostAudio;
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-        void OnHostPause(bool paused)
+        // Not "OnHostPause"/"OnHostAudio": this component sits on the same GameObject the page
+        // SendMessages to, and SendMessage would pick these up and fail to pass them a string
+        // (MissingMethodException in the browser console, never in the editor).
+        void HandleHostPause(bool paused)
         {
             if (paused) Hold();
             else Release();
         }
 
-        void OnHostAudio(bool enabled) => ApplyAudio();
+        void HandleHostAudio(bool enabled) => ApplyAudio();
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

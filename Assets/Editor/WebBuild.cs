@@ -32,6 +32,12 @@ public static class WebBuild
         EditorUtility.DisplayDialog("YouTube Playables build", report, "OK");
     }
 
+    /// <summary>
+    /// Same build from a script inside the open editor (no dialog, editor stays open). Schedule it with
+    /// EditorApplication.delayCall and watch Builds/last-build-yt.txt: "RUNNING" until it is done.
+    /// </summary>
+    public static string BuildInEditor() => Build();
+
     /// <summary>Batch-mode entry point; exits the editor with 0 on success.</summary>
     public static void YouTube()
     {
@@ -74,10 +80,23 @@ public static class WebBuild
         var compression = PlayerSettings.WebGL.compressionFormat;
         bool fallback = PlayerSettings.WebGL.decompressionFallback;
         var textures = EditorUserBuildSettings.webGLBuildSubtarget;
+        bool splash = PlayerSettings.SplashScreen.show;
+        bool splashLogo = PlayerSettings.SplashScreen.showUnityLogo;
 
         string report;
         try
         {
+            // WebGL import overrides for anything new (idempotent, seconds when nothing changed).
+            // Without them the data file is 157 MiB instead of ~25; see Docs/YouTube-Playables.md.
+            string shrink = WebShrink.ApplyAll();
+            if (shrink.StartsWith("EXCEPTION")) throw new Exception("WebShrink failed:\n" + shrink);
+
+            // The page already has its own loading screen, and YouTube measures time to the first
+            // frame; the Unity splash also puts a 2.7 MB logo texture into the data file.
+            // Both flags: with only show=false the 2.7 MB logo texture still went into the data file.
+            PlayerSettings.SplashScreen.show = false;
+            PlayerSettings.SplashScreen.showUnityLogo = false;
+
             PlayerSettings.WebGL.template = "PROJECT:YouTube";
             // Compressed, with the decompressor built into the loader, so the build does not depend
             // on the host sending Content-Encoding headers (same as the certified Car Simulator build).
@@ -139,6 +158,8 @@ public static class WebBuild
             PlayerSettings.WebGL.compressionFormat = compression;
             PlayerSettings.WebGL.decompressionFallback = fallback;
             EditorUserBuildSettings.webGLBuildSubtarget = textures;
+            PlayerSettings.SplashScreen.show = splash;
+            PlayerSettings.SplashScreen.showUnityLogo = splashLogo;
             AssetDatabase.SaveAssets();
         }
 

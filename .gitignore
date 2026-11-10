@@ -84,3 +84,6 @@ crashlytics-build.properties
 # Local Claude instructions (personal data)
 CLAUDE.md
 /Builds/
+
+# Local Claude Code tooling (preview launch config etc.)
+/.claude/

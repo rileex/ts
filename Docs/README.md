@@ -19,7 +19,7 @@
 |---|---|---|
 | 0 | `Off_Road_Racing_3/Scene/1_firstScene` | Заставка 4 с, асинхронная загрузка гаража; здесь живёт объект рекламы (`UnityAdsScript`, DontDestroyOnLoad) |
 | 1 | `Off_Road_Racing_3/Scene/Garage` | Меню: выбор/покупка машины (`CarSelect`), уровни (`LevelSelect`), настройки (`SettingsMenu`), `MainUtility` |
-| 2 | `Off_Road_Racing_3/Scene/Village` | Гонка: `Race_Manager` спавнит машину игрока и AI. Свет берёт из `Scene/Race_Track_1/LightingData.asset` |
+| 2 | `Off_Road_Racing_3/Scene/Village` | Гонка: `Race_Manager` спавнит машину игрока и AI. Свет — `Scene/Village/LightingData.asset` (перезапечён, см. [Lighting.md](Lighting.md)) |
 | — | `Race_Track_2`, `Race_Track_3` | Выключены в сборке |
 
 Важно: в `CarSelect.levelNames` только `"Village"`, `Race_Manager.levelID` = 0 — фактически в игре одна трасса.
@@ -35,13 +35,16 @@
 Тач-кнопки работают только при `controlType == Mobile`; на WebGL `InputSystem` принудительно включает клавиатуру.
 Режимы на мобилках: стрелки, джойстик, акселерометр (`ControlType` 0/1/2).
 
-## Реклама (сейчас)
-AdMob (GoogleMobileAds 7.4.0), только тестовые ID. Interstitial показывается на каждой загрузке сцены (`OnLevelWasLoaded`).
-Rewarded нигде не вызывается, награда закомментирована. Баннеры выключены.
+## Реклама
+- **WebGL (YouTube):** YouTube Playables SDK через `Assets/_Web/AdService.cs` — Interstitial на стыках сцен, Rewarded «x2 приз» на финише. AdMob на WebGL выключен. Подробно — [YouTube-Playables.md](YouTube-Playables.md).
+- **Android/iOS:** AdMob (GoogleMobileAds 7.4.0), только тестовые ID. Interstitial на каждой загрузке сцены (`OnLevelWasLoaded`), Rewarded не подключён, баннеры выключены — см. [Mobile.md](Mobile.md).
 
 ## Известные проблемы (из разбора 10.11.2026)
-- Читы в гараже: **H — `PlayerPrefs.DeleteAll`**, E — +14000 к неиспользуемому ключу `Coins` (`MainUtility.cs:114-120`).
-- `Application.Quit` в гараже и `MainMenu`; Esc открывает меню выхода.
-- `Screen.SetResolution` при смене качества (`Load_Settings.cs`, `SettingsMenu.cs`) — ломает канвас в браузере.
+- ~~Читы в гараже: H — `PlayerPrefs.DeleteAll`, E — +14000 к ключу `Coins`~~ — теперь только в редакторе (E добавляет к `TotalScores`).
+- ~~`Application.Quit` и меню выхода по Esc~~ — выключены на WebGL, кнопки Exit в браузере скрыты.
+- ~~`Screen.SetResolution` при смене качества~~ — в браузере не вызывается (`ScreenCompat`).
+- ~~На WebGL всегда клавиатура~~ — в мобильном браузере включается тач-управление.
 - UI только альбомный (CanvasScaler 1280×720, match 0.5).
+- В шаблоне перепутаны медали: 2-е место получает иконку/приз «bronze» (2000), 3-е — «silver» (1000) (`Start_Finish_UI.cs`).
 - Остатки шаблона: бренд «ALIyerEdon», `companyName: SmartMove`, `productName: OffroadRacing`, bundle id `com.ALIyerEdon.MudRacer`, `Assets/Scenes/SampleScene.unity`.
+- Camera Filter Pack: в `Resources` оставлен только фильтр TV_ARCADE, остальные — в `Camera Filter Pack/NotInBuild` (см. [YouTube-Playables.md](YouTube-Playables.md#размер-сборки)).
