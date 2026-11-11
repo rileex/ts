@@ -8,6 +8,7 @@
 | [YouTube-Playables.md](YouTube-Playables.md) | Выпуск на YouTube через McPlay: требования, сборка, статус |
 | [Mobile.md](Mobile.md) | Google Play и iPhone: что настроить перед выпуском |
 | [Lighting.md](Lighting.md) | Запекание света и теней, бюджет размера |
+| [UI.md](UI.md) | Интерфейс в стиле Telemetry: устройство, пересборка, раскладки, громкость эффектов |
 
 ## Репозиторий
 - GitHub: https://github.com/rileex/ts.
@@ -18,7 +19,7 @@
 | # | Сцена | Что делает |
 |---|---|---|
 | 0 | `Off_Road_Racing_3/Scene/1_firstScene` | Заставка 4 с (в браузере — без паузы и под HTML-экраном загрузки), асинхронная загрузка гаража; здесь живёт объект рекламы (`UnityAdsScript`, DontDestroyOnLoad) |
-| 1 | `Off_Road_Racing_3/Scene/Garage` | Меню: выбор/покупка машины (`CarSelect`), уровни (`LevelSelect`), настройки (`SettingsMenu`), `MainUtility` |
+| 1 | `Off_Road_Racing_3/Scene/Garage` | Гараж (Telemetry UI): выбор/покупка машины (`CarSelect`), трассы (`LevelSelect`), настройки (`SettingsMenu`), `MainUtility` |
 | 2 | `Off_Road_Racing_3/Scene/Village` | Гонка: `Race_Manager` спавнит машину игрока и AI. Свет — `Scene/Village/LightingData.asset` (перезапечён, см. [Lighting.md](Lighting.md)) |
 | — | `Race_Track_2`, `Race_Track_3` | Выключены в сборке |
 
@@ -44,7 +45,7 @@
 - ~~`Application.Quit` и меню выхода по Esc~~ — выключены на WebGL, кнопки Exit в браузере скрыты.
 - ~~`Screen.SetResolution` при смене качества~~ — в браузере не вызывается (`ScreenCompat`).
 - ~~На WebGL всегда клавиатура~~ — в мобильном браузере включается тач-управление.
-- ~~UI только альбомный~~ — портрет и экраны уже 16:9 подстраивает `Assets/_Web/PortraitFit.cs` (см. YouTube-Playables.md). Меню настроек в портрете мелкое.
+- ~~UI только альбомный~~ — с 11.11.2026 у интерфейса свои раскладки для ПК, телефона горизонтально и вертикально ([UI.md](UI.md)); камеры подстраивает `Assets/_Web/PortraitFit.cs`.
 - ~~`LevelSelect.Start`: NullReferenceException на пустых слотах уровней~~ — исправлено (в WebGL это роняло игру).
 - ~~`Garage.unity`: `MainUtility.startingScore = 123000`~~ — теперь 1 400, как в скрипте.
 - Постеры других игр на полке в гараже (из шаблона) — решено оставить (10.11.2026).
