@@ -35,7 +35,7 @@ namespace MicroCar.Web
             "Balloons", "Target FPS", "TruckID",
         };
 
-        static readonly string[] FloatKeys = { "Music", "accelSensibility", "SteeringWheelSens" };
+        static readonly string[] FloatKeys = { "Music", "SfxVolume", "accelSensibility", "SteeringWheelSens" };
 
         static List<(string key, bool isFloat)> keys;
         static bool loaded;

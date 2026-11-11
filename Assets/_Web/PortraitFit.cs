@@ -187,6 +187,7 @@ namespace MicroCar.Web
             bool raceCameraDriven = false;
             foreach (var car in FindObjectsByType<EasyCarController>(FindObjectsSortMode.None))
                 raceCameraDriven |= car.isPlayer;
+            bool garage = FindFirstObjectByType<CarSelect>(FindObjectsInactive.Include) != null;
 
             foreach (var cam in FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
@@ -203,8 +204,21 @@ namespace MicroCar.Web
                 float fov = Opened(authored, aspect, MaxVerticalFov);
                 if (!Mathf.Approximately(cam.fieldOfView, fov))
                     cam.fieldOfView = fov;
+
+                // Garage, upright: lift the picture so the car stands above the menu, which takes
+                // the bottom of a tall screen (a lens shift; the camera itself does not move).
+                cam.ResetProjectionMatrix();
+                if (garage && Portraitness > 0f)
+                {
+                    var m = cam.projectionMatrix;
+                    m[1, 2] = -GarageLift * Portraitness;
+                    cam.projectionMatrix = m;
+                }
             }
         }
+
+        /// <summary>Garage camera lens shift at full portrait, in screen halves (0.4 = a fifth of the height).</summary>
+        const float GarageLift = 0.4f;
 
         enum Spread { Split, InPlace, Whole }
 

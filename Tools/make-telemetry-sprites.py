@@ -61,6 +61,8 @@ def circle(d, fill, border=None, width=0):
 
 
 def panels():
+    # Plain white, for filled bars (an Image needs a sprite to fill).
+    save(Image.new("RGBA", (8, 8), (255, 255, 255, 255)), "white.png")
     save(rounded((48, 48), 8, GLASS, LINE, 2), "glass.png")
     save(rounded((48, 48), 8, (255, 255, 255, 15), LINE, 2), "row.png")
     save(rounded((48, 48), 8, LIME + (22,), LIME + (255,), 2), "row_sel.png")
@@ -113,9 +115,9 @@ def gradient(name, size, stops, horizontal):
 
 def scrims():
     # Garage, landscape: dark behind the left rail, clear over the car, a little on the right.
-    gradient("scrim_garage_h.png", (256, 4), [(0, .92), (.30, .55), (.55, 0), (.82, 0), (1, .35)], True)
+    gradient("scrim_garage_h.png", (256, 4), [(0, .94), (.30, .86), (.46, .25), (.58, 0), (.82, 0), (1, .4)], True)
     # Garage, portrait (bottom-up): menu at the bottom, car in the middle, logo at the top.
-    gradient("scrim_garage_v.png", (4, 256), [(0, .94), (.32, .94), (.44, 0), (.78, 0), (1, .65)], False)
+    gradient("scrim_garage_v.png", (4, 256), [(0, .96), (.40, .92), (.54, 0), (.80, 0), (1, .6)], False)
     # Race HUD (bottom-up): a little dark at the bottom and top edges for the readouts.
     gradient("scrim_hud_v.png", (4, 256), [(0, .5), (.28, 0), (.78, 0), (1, .35)], False)
     # Results, landscape: dark on the left (the big place number), lighter in the middle.
