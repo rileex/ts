@@ -49,7 +49,7 @@ namespace ALIyerEdon
 			ID = PlayerPrefs.GetInt("CarID");
 
 			// Update total scores display
-			TotalScores.text = "Total Scores : " + PlayerPrefs.GetInt("TotalScores").ToString();
+			TotalScores.text = MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
 
 			// Distroy all players car before instantiate the new one
 			Destroy(GameObject.FindGameObjectWithTag("Player"));
@@ -72,7 +72,7 @@ namespace ALIyerEdon
 			}
 
 			// Update current car value text
-			carPriceText.text = carPrices[ID].ToString() + " $";
+			carPriceText.text = MicroCar.UI.Tele.Credits(carPrices[ID]) + " CR";
 
 			// Update current car is locked or not
 			if (PlayerPrefs.GetInt("Car" + ID.ToString()) == 3)
@@ -116,7 +116,7 @@ namespace ALIyerEdon
 				Price.SetActive(true);
 			}
 
-			carPriceText.text = carPrices[ID].ToString() + " $";
+			carPriceText.text = MicroCar.UI.Tele.Credits(carPrices[ID]) + " CR";
 
 		}
 		// Public function for PrevCar select button in menu
@@ -149,7 +149,7 @@ namespace ALIyerEdon
 				Price.SetActive(true);
 			}
 
-			carPriceText.text = carPrices[ID].ToString() + " $";
+			carPriceText.text = MicroCar.UI.Tele.Credits(carPrices[ID]) + " CR";
 
 		}
 
@@ -185,7 +185,7 @@ namespace ALIyerEdon
 				purchaseUI.SetActive(false);
 
 				// Update total scores display
-				TotalScores.text = "Total Scores : " + PlayerPrefs.GetInt("TotalScores").ToString();
+				TotalScores.text = MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
 			}
 			else
 			{

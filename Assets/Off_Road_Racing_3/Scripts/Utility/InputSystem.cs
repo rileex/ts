@@ -61,7 +61,8 @@ namespace ALIyerEdon
 				// Browser: keyboard on desktop, on-screen touch controls on phones and tablets.
 				controlType = Application.isMobilePlatform ? InputType.Mobile : InputType.Keyboard;
 #elif UNITY_EDITOR || UNITY_STANDALONE || UNITY_WSA || UNITY_64
-				controlType = InputType.Keyboard;
+				// In the editor, MicroCar/UI/Simulate Touch tries the phone UI and touch controls.
+				controlType = MicroCar.UI.TeleScreen.Touch ? InputType.Mobile : InputType.Keyboard;
 #else
 						controlType = InputType.Mobile;			
 #endif
@@ -156,7 +157,14 @@ namespace ALIyerEdon
 					FindFirstObjectByType<CameraSwitch>().NextCamera();
 
 				if (Input.GetKeyDown(Pause))
-					FindFirstObjectByType<Pause_Menu>().Pause();
+				{
+					// Esc pauses, and resumes again from the pause menu.
+					var pauseMenu = FindFirstObjectByType<Pause_Menu>();
+					if (pauseMenu.pauseMenu.activeSelf)
+						pauseMenu.Resume();
+					else
+						pauseMenu.Pause();
+				}
 			}
 
 			controller.Move(motorInput, steerInput, handBrake);

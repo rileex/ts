@@ -56,7 +56,7 @@ namespace ALIyerEdon
 			purchaseInfo.text = "";
 
 			// Update total scores display
-			TotalScores.text = "Total Scores : " + PlayerPrefs.GetInt("TotalScores").ToString();
+			TotalScores.text = MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
 
 			for (int l = 0; l < levelPriceText.Length; l++)
 			{
@@ -80,7 +80,7 @@ namespace ALIyerEdon
 				if (PlayerPrefs.GetInt("Level" + a.ToString()) == 3)
 					levelPriceText[a].text = "";
 				else
-					levelPriceText[a].text = "Price : " + levelPrices[a].ToString();
+					levelPriceText[a].text = MicroCar.UI.Tele.Credits(levelPrices[a]) + " CR";
 			}
 
 			// Update award icons. "Award_Level_n" holds the best finishing place (0 = 1st ... 3 = none):
@@ -124,7 +124,7 @@ namespace ALIyerEdon
 				levelPriceText[currentSelectedLevel].text = "";
 
 				// Update total scores display
-				TotalScores.text = "Total Scores : " + PlayerPrefs.GetInt("TotalScores").ToString();
+				TotalScores.text = MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
 
 				purchaseUI.SetActive(false);
 

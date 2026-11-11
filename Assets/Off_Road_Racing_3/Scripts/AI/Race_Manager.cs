@@ -82,6 +82,12 @@ namespace ALIyerEdon
         string playerName = "Player";
         bool canStart;
 
+        /// <summary>The player's racer name (as in the standings) — the Telemetry UI marks that row.</summary>
+        public string PlayerName => playerName;
+
+        /// <summary>Number of cars in the race (0 until they are spawned).</summary>
+        public int RacerCount => carPositions != null ? carPositions.Length : 0;
+
         IEnumerator Start()
         {
             AudioListener.volume = 1f;
@@ -170,8 +176,7 @@ namespace ALIyerEdon
             }
 
             startUI.GetComponent<Start_Finish_UI>().totalScores.text =
-                "Total Scores : " +
-                PlayerPrefs.GetInt("TotalScores").ToString();
+                MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
         }
         public void StartRace_Button()
         {
@@ -290,8 +295,7 @@ namespace ALIyerEdon
                  FindFirstObjectByType<Start_Finish_UI>().Update_Award(3, levelID);
 
              startUI.GetComponent<Start_Finish_UI>().totalScores.text =
-                 "Total Scores : " +
-                 PlayerPrefs.GetInt("TotalScores").ToString();
+                 MicroCar.UI.Tele.Credits(PlayerPrefs.GetInt("TotalScores"));
          }
 
 
@@ -312,27 +316,13 @@ namespace ALIyerEdon
 
 
              // Update ui info (player position + current lap   )
+             // Telemetry UI formats: "P2/5" and "1/2".
              if (playerInfo)
-                 playerInfo.text = "Pos : " + (playerPosition.currentPosition + 1).ToString()
-                 + " / " + carPositions.Length.ToString();
-             else
-                 Debug.Log("Please add -Position Info- text object in the -Race Manager- component");
+                 playerInfo.text = "P" + (playerPosition.currentPosition + 1).ToString()
+                 + "/" + carPositions.Length.ToString();
 
-             if (playerPosition.currentLap > 0)
-             {
-                 if (lapInfo)
-                     lapInfo.text = "Lap : " + playerPosition.currentLap.ToString()
-                      + " / " + totalLaps.ToString();
-                 else
-                     Debug.Log("Please add -Lap Info- text object in the -Race Manager- component");
-             }
-             else
-             {
-                 if (lapInfo)
-                     lapInfo.text = "Lap : 1" + " / " + totalLaps.ToString();
-                 else
-                     Debug.Log("Please add -Lap Info- text object in the -Race Manager- component");
-             }
+             if (lapInfo)
+                 lapInfo.text = Mathf.Max(1, playerPosition.currentLap).ToString() + "/" + totalLaps.ToString();
              //_________________________________
 
              // Positions info
@@ -341,7 +331,7 @@ namespace ALIyerEdon
                  try
                  {
                      if (racerInfo[pos])
-                         racerInfo[pos].text = "   " + (pos + 1).ToString() + "   |   " + sortedPositions[pos].Name.ToString();
+                         racerInfo[pos].text = sortedPositions[pos].Name.ToString(); // the row shows "P1".."P5" itself
                  }
                  catch { }
              }

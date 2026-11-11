@@ -124,6 +124,9 @@ namespace MicroCar.Web
             {
                 if (scaler.uiScaleMode != CanvasScaler.ScaleMode.ScaleWithScreenSize)
                     continue;
+                // The Telemetry UI sizes and lays itself out (MicroCar.UI.TeleCanvas).
+                if (scaler.GetComponent<MicroCar.UI.TeleCanvas>() != null)
+                    continue;
 
                 if (scaler.screenMatchMode == CanvasScaler.ScreenMatchMode.MatchWidthOrHeight)
                 {
@@ -264,6 +267,8 @@ namespace MicroCar.Web
             {
                 var canvas = rt.GetComponentInParent<Canvas>(true);
                 if (canvas == null || rt.parent != canvas.rootCanvas.transform)
+                    continue;
+                if (canvas.rootCanvas.GetComponent<MicroCar.UI.TeleCanvas>() != null)
                     continue;
 
                 var root = (RectTransform)canvas.rootCanvas.transform;
